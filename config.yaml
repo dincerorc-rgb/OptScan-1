@@ -1,0 +1,67 @@
+account:
+  net_liq: 50000          # USD - edit
+  max_premium_pct: 2.0    # per-position premium cap (%)
+
+watchlist:
+  - NVDA
+  - AMZN
+  - META
+  - MSFT
+  - GOOGL
+  - AAPL
+  - TSLA
+  - PLTR
+  - MU
+  - AMD
+  - ORCL
+  - HOOD
+  - RKLB
+  - OKLO
+  - IREN
+  - HIMS
+  - CRWV
+  - MP
+  - UUUU
+  - USAR
+  - QQQ
+  - SPY
+  - IWM
+
+momentum:
+  ema_fast: 20
+  ema_slow: 50
+  adx_min: 22
+  rsi_min: 50
+  rsi_max: 78            # above = extended, flag not entry
+  breakout_lookback: 20  # close > N-day high
+  vol_mult: 1.5          # volume vs 20d avg
+  atr_contraction: 0.8   # ATR5/ATR20 below = coiled (pre-break)
+  pullback_ema_tol: 0.02 # within 2% of EMA20 = pullback entry
+
+options:
+  swing_dte: [30, 90]        # target expiry window for swing calls
+  leaps_dte: [300, 500]      # LEAPS window
+  long_call_delta: [0.40, 0.55]
+  spread_short_delta: 0.25
+  iv_cheap_rank: 40          # IV rank below -> outright long premium OK
+  iv_rich_rank: 70           # IV rank above -> spreads / short-vol only
+  min_open_interest: 200
+  max_spread_pct: 0.10       # bid/ask spread cap as fraction of mid
+
+insider:
+  enabled: true
+  window_days: 5
+  cluster_score_min: 3.0
+
+alerts:
+  send_no_setup_summary: false   # quiet unless there is a BUY/SELL
+  only_on_signal: true
+
+# open positions -> SELL/TRIM alerts when trend breaks or gets extended
+positions:
+  - {ticker: QQQ,  side: SHORT, label: "QQQ 710P Jan-27"}
+  - {ticker: AAPL, side: LONG,  label: "AAPL 315C/320C/-335C Jan-27"}
+  - {ticker: GOOGL, side: LONG, label: "GOOGL 375C Oct-16"}
+  - {ticker: PLTR, side: LONG,  label: "PTIR 50sh"}
+  - {ticker: MU,   side: LONG,  label: "MUU 80sh"}
+  - {ticker: MSTR, side: LONG,  label: "MSTX 100sh"}
