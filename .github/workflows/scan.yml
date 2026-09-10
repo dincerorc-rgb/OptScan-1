@@ -23,7 +23,7 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          SEC_USER_AGENT: "optscan github-actions"
+          SEC_USER_AGENT: "Dincer optscan dincerorc@gmail.com"
       - name: persist IV history
         run: |
           git config user.name optscan && git config user.email optscan@users.noreply.github.com
