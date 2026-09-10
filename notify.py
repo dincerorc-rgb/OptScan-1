@@ -1,6 +1,7 @@
 """Telegram alerts. Env: TELEGRAM_TOKEN, TELEGRAM_CHAT_ID."""
 from __future__ import annotations
 
+import html
 import logging
 import os
 
@@ -15,9 +16,8 @@ def send(text: str) -> bool:
         log.warning("Telegram not configured; printing instead\n%s", text)
         print(text)
         return False
-    # Telegram hard limit 4096 chars
-        import html
-    text = html.escape(text).replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>") ok = True
+    text = html.escape(text).replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>")
+    ok = True
     for i in range(0, len(text), 3900):
         r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
                           json={"chat_id": chat, "text": text[i:i + 3900], "parse_mode": "HTML",
