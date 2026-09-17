@@ -24,7 +24,8 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TICKERS: ${{ github.event.inputs.tickers }}
-        run: unzip -o optmap-github.zip && python options_map.py "$TICKERS"
+        run: unzip -o optmap-github.zip && python options_map.py "${TICKERS:-AAPL,MSFT,GOOGL,AMZN,META,NVDA,TSLA,SPY,QQQ,PLTR,IREN,SPCX,AMD,MU,DRAM,UUUU}"
+
       - name: keep outputs
         if: always()
         uses: actions/upload-artifact@v4
