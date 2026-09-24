@@ -41,9 +41,9 @@ FIELDS = ["ts_utc", "date", "source", "ticker", "direction", "grade", "setup",
 SETUPS = ("BREAKOUT", "COIL", "PULLBACK", "EXTENDED", "BEARDOWN")
 _NUM = r"\$?(\d{1,6}(?:\.\d{1,4})?)"
 _KV = {
-    "entry": re.compile(r"\b(?:entry|ent|buy|@)\s*[:=]?\s*" + _NUM, re.I),
-    "target": re.compile(r"\b(?:target|tgt|tp1?|t1)\s*[:=]?\s*" + _NUM, re.I),
-    "stop": re.compile(r"\b(?:stop|sl|stp|inval(?:id)?)\s*[:=<]?\s*" + _NUM, re.I),
+    "entry": re.compile(r"\b(?:entry|ent|buy|@)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
+    "target": re.compile(r"\b(?:target|tgt|tp1?|t1)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
+    "stop": re.compile(r"\b(?:stop|sl|stp|inval(?:id)?)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
     "spot": re.compile(r"\b(?:spot|px|last|close)\s*[:=]?\s*" + _NUM, re.I),
 }
 _TICKER = re.compile(r"(?:^|[\s*_`•\-|▶►#])\$?([A-Z]{1,5}(?:\.[A-Z])?)\b")
@@ -71,7 +71,7 @@ def _header(line: str):
 
 def _clean(text: str) -> str:
     import html
-    return html.unescape(re.sub(r"<[^>]+>", "", text))
+    return re.sub(r"[*_`]", "", html.unescape(re.sub(r"</?(?:b|i|u|s|code|pre|a|strong|em)(?:\s[^<>\n]*)?>", "", text)))
 
 
 def parse_signals(text: str, source: str) -> list[dict]:
