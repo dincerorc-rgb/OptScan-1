@@ -51,70 +51,77 @@ _VERDICT = re.compile(r"\b(CALL|PUT|NONE)\b\s*[:\-–(]?\s*(?:grade\s*)?\(?([ABC
 _STOPWORDS = {"CALL", "PUT", "NONE", "GEX", "OI", "PC", "IV", "ATM", "OTM", "ITM", "DTE",
               "ET", "UTC", "AEST", "TP", "SL", "BUY", "SELL", "MAP", "MAX", "PAIN", "FLIP",
               "WALL", "A", "B", "C", "D", "S", "US", "USD", "NEW", "IVR", "RSI", "EMA",
-              "ATR", "BE", "R", "OK", "WARN", "BLOCK", "GRADE", "TOP", "LOW", "HIGH"} | set(SETUPS)
+              "ATR", "BE", "R", "OK", "WARN", "BLOCK", "GRADE", "TOP", "LOW", "HIGH", "PCR", "BT", "ADX", "RV", "CW", "PW", "MP", "P", "SPOT", "UTC", "OPTIONS", "WATCH", "LONG", "SHORT", "BULL", "BEAR", "NET", "VOL", "AND"} | set(SETUPS)
 
 
 def _today() -> str:
     return dt.datetime.utcnow().strftime("%Y-%m-%d")
 
 
-def _first_ticker(line: str) -> str | None:
-    for m in _TICKER.finditer(line):
-        t = m.group(1)
-        if t not in _STOPWORDS:
-            return t
-    return None
+_HEADER = re.compile(r"^[\s*_`•\-|▶►#>\d.)]*\$?([A-Z]{1,5}(?:\.[A-Z])?)\b[\s*_`:]*(?:spot\s*)?\$?(\d{1,6}(?:\.\d{1,4})?)?")
+
+
+def _header(line: str):
+    """A line that STARTS with a ticker (e.g. '*PLTR*  spot 174.2', 'MU 1012.00 BREAKOUT')."""
+    m = _HEADER.match(line)
+    if not m or m.group(1) in _STOPWORDS:
+        return None, None
+    return m.group(1), (float(m.group(2)) if m.group(2) else None)
+
+
+def _clean(text: str) -> str:
+    import html
+    return html.unescape(re.sub(r"<[^>]+>", "", text))
 
 
 def parse_signals(text: str, source: str) -> list[dict]:
     """Pull CALL/PUT (options-map) or setup (scanner) signals out of one message.
 
-    Works line by line: a line needs a ticker plus either a CALL/PUT verdict or a
-    scanner setup keyword. Numbers for entry/target/stop/spot are optional and are
-    picked up from the same line or the next two lines (multi-line layouts).
+    Block-based: a header line that starts with a ticker opens a block; a CALL/PUT
+    verdict or scanner setup keyword inside that block becomes a signal for that
+    ticker. entry/target/stop/spot numbers are read from the rest of the block.
     """
+    lines = _clean(text).splitlines()
+    blocks, cur = [], None
+    for line in lines:
+        t, sp = _header(line)
+        if t:
+            cur = {"ticker": t, "spot": sp, "lines": [line]}
+            blocks.append(cur)
+        elif cur is not None:
+            cur["lines"].append(line)
     out: list[dict] = []
-    lines = [l for l in text.splitlines()]
-    for i, line in enumerate(lines):
-        up = line.upper()
+    for blk in blocks:
+        body = "\n".join(blk["lines"])
         direction = grade = setup = None
-        v = _VERDICT.search(line)
-        if v and v.group(1).upper() in ("CALL", "PUT"):
-            direction, grade = v.group(1).upper(), (v.group(2) or "").upper() or None
-        else:
+        for line in blk["lines"]:
+            up = line.upper()
             for s in SETUPS:
-                if re.search(rf"\b{s}\b", up):
+                if re.search(rf"\b{s}\b", up) and not setup:
                     setup = s
-                    direction = "PUT" if s == "BEARDOWN" else "CALL"
-                    if s == "EXTENDED":          # extended = don't chase; log but no edge claim
-                        direction = None
-                    break
+                    if s == "EXTENDED":
+                        continue
+                    direction = "PUT" if (s == "BEARDOWN" or re.search(r"\b(short|bear)", line, re.I)) else "CALL"
+            v = _VERDICT.search(line)
+            if v and v.group(1).upper() in ("CALL", "PUT") and not direction:
+                direction, grade = v.group(1).upper(), (v.group(2) or "").upper() or None
         if not direction:
             continue
-        ticker = _first_ticker(line)
-        # ticker may sit on a header line just above ("PLTR 174.2\n → CALL B ...")
-        j = i - 1
-        while ticker is None and j >= max(0, i - 2):
-            ticker = _first_ticker(lines[j]); j -= 1
-        if not ticker:
-            continue
-        ctx = " ".join(lines[i:i + 3])
-        # stop scanning context at the next ticker line so levels don't bleed across tickers
         nums = {}
         for k, rx in _KV.items():
-            m = rx.search(line) or rx.search(ctx)
+            m = rx.search(body)
             if m:
                 nums[k] = float(m.group(1))
+        spot = nums.get("spot", blk["spot"])
         g = grade or ("S" if setup else "C")
         out.append({
             "ts_utc": dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"),
-            "date": _today(), "source": source, "ticker": ticker, "direction": direction,
-            "grade": g, "setup": setup or "", "spot": nums.get("spot", ""),
+            "date": _today(), "source": source, "ticker": blk["ticker"], "direction": direction,
+            "grade": g, "setup": setup or "", "spot": spot if spot is not None else "",
             "entry": nums.get("entry", ""), "target": nums.get("target", ""),
             "stop": nums.get("stop", ""), "invalid": "", "p": GRADE_P.get(g, 0.5),
-            "raw": line.strip()[:160],
+            "raw": blk["lines"][0].strip()[:160],
         })
-    # de-dup within a message (same ticker+direction)
     seen, uniq = set(), []
     for s in out:
         k = (s["ticker"], s["direction"])
@@ -248,3 +255,30 @@ def send_telegram(text: str) -> bool:
         except Exception as e:                      # never break the run over a message
             print("[calib] telegram send failed:", e); ok = False
     return ok
+
+
+def git_save(paths: list[str], msg: str) -> None:
+    """Commit + push the log from inside GitHub Actions (no extra workflow step needed).
+    Needs repo Settings -> Actions -> General -> Workflow permissions = Read and write."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    import subprocess as sp
+
+    def run(*a):
+        return sp.run(list(a), capture_output=True, text=True)
+    run("git", "config", "user.name", "optscan-bot")
+    run("git", "config", "user.email", "optscan-bot@users.noreply.github.com")
+    for p in paths:
+        if Path(p).exists():
+            run("git", "add", "-f", p)
+    if run("git", "diff", "--cached", "--quiet").returncode == 0:
+        return
+    run("git", "commit", "-m", f"{msg} [skip ci]")
+    for _ in range(3):
+        run("git", "pull", "--rebase", "-X", "theirs")
+        r = run("git", "push")
+        if r.returncode == 0:
+            print("[calib] log saved to repo"); return
+        import time; time.sleep(5)
+    print("[calib] could not push log:", r.stderr.strip()[:300],
+          "\n -> Settings > Actions > General > Workflow permissions = Read and write")
