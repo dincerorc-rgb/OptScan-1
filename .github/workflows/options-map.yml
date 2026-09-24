@@ -8,6 +8,9 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: write
+
 jobs:
   map:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TICKERS: ${{ github.event.inputs.tickers }}
-        run: unzip -o optmap-github.zip && python options_map.py "${TICKERS:-AAPL,MSFT,GOOGL,AMZN,META,NVDA,TSLA,SPY,QQQ,PLTR,IREN,SPCX,AMD,MU,DRAM,UUUU}"
+        run: unzip -o optmap-github.zip && python calib_run.py options_map.py "${TICKERS:-AAPL,MSFT,GOOGL,AMZN,META,NVDA,TSLA,SPY,QQQ,PLTR,IREN,SPCX,AMD,MU,DRAM,UUUU}"
 
       - name: keep outputs
         if: always()
