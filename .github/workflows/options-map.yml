@@ -1,6 +1,10 @@
 name: options-map
 
 on:
+  schedule:
+    # US open + 30 min before close (ET). EDT now; after 1 Nov 2026 change to 14 and 20
+    - cron: "32 13 * * 1-5"
+    - cron: "32 19 * * 1-5"
   workflow_dispatch:
     inputs:
       tickers:
