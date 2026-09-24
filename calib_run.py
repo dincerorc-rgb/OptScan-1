@@ -165,6 +165,7 @@ def main() -> int:
         if msg:
             print(msg)
             calib.send_telegram(msg)
+        calib.git_save([str(calib.SIGNALS), str(calib.UNPARSED)], "calib: log signals")
     except Exception:
         print("[calib] post-process failed (scanner output unaffected):")
         traceback.print_exc()
