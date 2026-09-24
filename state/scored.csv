@@ -1,0 +1,6 @@
+key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,status,sessions
+2026-09-24|options_map|AMZN|CALL,2026-09-24,options_map,AMZN,CALL,B,,0.6,250.01,,,,,open,0
+2026-09-24|options_map|TSLA|PUT,2026-09-24,options_map,TSLA,PUT,C,,0.52,379.64,,,,,open,0
+2026-09-24|options_map|QQQ|PUT,2026-09-24,options_map,QQQ,PUT,C,,0.52,740.23,,,,,open,0
+2026-09-24|options_map|DRAM|CALL,2026-09-24,options_map,DRAM,CALL,B,,0.6,60.42,,,,,open,0
+2026-09-24|options_map|UUUU|PUT,2026-09-24,options_map,UUUU,PUT,C,,0.52,11.34,,,,,open,0
