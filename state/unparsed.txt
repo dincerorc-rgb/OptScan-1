@@ -1,0 +1,19 @@
+
+=== 2026-09-24 run
+<b>optscan 2026-09-24 20:29</b>  BUY 1 · SELL 2 · 23 names
+
+🔻 <b>SELL/EXIT</b> QQQ 741.10 — QQQ 710P Jan-27
+   close &gt; EMA50 715.15
+
+🔻 <b>SELL/EXIT</b> GOOGL 342.36 — GOOGL 375C Oct-16
+   close &lt; EMA50 346.02
+
+🟢 <b>BUY</b> <b>SPY</b> 767.27  <b>PULLBACK</b> LONG ★2
+RSI 54 ADX 12 vol 0.9x 20d +0.4%
+IV 15% IVR 79(est) IV/RV 1.35 PCR 1.56
+BT WEAK  n=43 win10 58% avg10 +0.3% t=1.13
+→ <b>BULL_CALL_SPREAD</b> 2026-11-20 (57d) +775C / -800C @ 9.88 BE 784.88 Δ0.49
+   size 1x ≈ $988 · IV rich (79) - spread, max 2.5x
+   tag EMA20 764.11, RSI 54
+
+&lt;i&gt;below bar:&lt;/i&gt; MSFT PULLBACK ★3 BT:FAIL, NVDA PULLBACK ★2 BT:FAIL, UUUU BEARDOWN ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL, META EXTENDED ★1 BT:NA
