@@ -19,7 +19,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: mkdir -p state
       - run: pip install -r requirements.txt
-      - run: python run.py ${{ github.event.inputs.cmd || 'scan' }}
+      - run: python calib_run.py run.py ${{ github.event.inputs.cmd || 'scan' }}
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
