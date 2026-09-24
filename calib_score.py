@@ -186,6 +186,7 @@ def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "score"
     rows = score_all()
     print(f"[score] {len(rows)} signals scored -> {SCORED}")
+    calib.git_save([str(SCORED)], "calib: score")
     if mode == "review":
         msg = review(rows)
         print(msg)
