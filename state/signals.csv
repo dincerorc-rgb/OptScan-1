@@ -10,3 +10,5 @@ ts_utc,date,source,ticker,direction,grade,setup,spot,entry,target,stop,invalid,p
 2026-09-25T13:42Z,2026-09-25,options_map,PLTR,CALL,C,,192.21,192.21,200.0,175.0,175.0,0.52,PLTR  spot 192.21
 2026-09-25T13:42Z,2026-09-25,options_map,SPCX,CALL,B,,149.08,149.08,180.0,135.0,135.0,0.6,SPCX  spot 149.08
 2026-09-25T13:42Z,2026-09-25,options_map,UUUU,PUT,B,,11.52,11.52,10.0,14.0,14.0,0.6,UUUU  spot 11.52
+2026-09-25T19:44Z,2026-09-25,options_map,QQQ,PUT,C,,743.97,743.97,660.0,759.0,759.0,0.52,QQQ  spot 743.97
+2026-09-25T19:44Z,2026-09-25,options_map,IREN,PUT,C,,44.3,44.3,35.0,49.5,49.5,0.52,IREN  spot 44.30
