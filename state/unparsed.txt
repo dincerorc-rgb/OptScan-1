@@ -43,3 +43,29 @@ BT WEAK  n=43 win10 58% avg10 +0.3% t=1.13
    tag EMA20 764.56, RSI 55
 
 &lt;i&gt;below bar:&lt;/i&gt; TSLA PULLBACK ★3 BT:FAIL, UUUU BEARDOWN ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
+=== 2026-09-25 run
+<b>optscan 2026-09-25 20:26</b>  BUY 2 · SELL 2 · 23 names
+
+🔻 <b>SELL/EXIT</b> QQQ 744.50 — QQQ 710P Jan-27
+   close &gt; EMA50 716.30
+
+🔻 <b>SELL/EXIT</b> GOOGL 343.92 — GOOGL 375C Oct-16
+   close &lt; EMA50 345.93
+
+🟢 <b>BUY</b> <b>NVDA</b> 225.07  <b>COIL</b> LONG ★2
+RSI 55 ADX 13 vol 0.8x 20d -1.2%
+IV 32% IVR 22(est) IV/RV 1.00 PCR 0.58
+BT NA  n=6 win10 67% avg10 +4.0% t=1.92
+→ <b>LONG_CALL</b> 2027-09-17 (357d) +265C @ 23.25 BE 288.25 Δ0.47
+   size 0x ≈ $0 · IV cheap - buy premium | 1x = $2,325 &gt; 2.0% cap
+   ATR5/20 0.79 tight, -4.0% from 20dH
+
+🟢 <b>BUY</b> <b>SPY</b> 771.35  <b>PULLBACK</b> LONG ★2
+RSI 57 ADX 11 vol 0.8x 20d +0.3%
+IV 14% IVR 79(est) IV/RV 1.34 PCR 1.66
+BT WEAK  n=43 win10 58% avg10 +0.3% t=1.13
+→ <b>BULL_CALL_SPREAD</b> 2026-11-20 (56d) +780C / -805C @ 9.40 BE 789.40 Δ0.48
+   size 1x ≈ $940 · IV rich (79) - spread, max 2.7x
+   tag EMA20 764.79, RSI 57
+
+&lt;i&gt;below bar:&lt;/i&gt; TSLA PULLBACK ★3 BT:FAIL, UUUU BEARDOWN ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
