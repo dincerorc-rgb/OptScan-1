@@ -147,3 +147,24 @@ BT WEAK  n=24 win10 58% avg10 +1.4% t=1.16
    tag EMA20 331.25, RSI 54
 
 &lt;i&gt;below bar:&lt;/i&gt; MSFT PULLBACK ★3 BT:FAIL, UUUU BEARDOWN ★2 BT:FAIL, QQQ PULLBACK ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
+=== 2026-09-29 run
+<b>optscan 2026-09-29 20:30</b>  BUY 1 · SELL 3 · 23 names
+
+🔻 <b>SELL/EXIT</b> QQQ 737.93 — QQQ 710P Jan-27
+   close &gt; EMA50 717.91
+
+🔻 <b>SELL/TRIM</b> AAPL 329.40 — AAPL 315C/320C/-335C Jan-27
+   below EMA20 330.95
+
+🔻 <b>SELL/EXIT</b> GOOGL 340.92 — GOOGL 375C Oct-16
+   close &lt; EMA50 345.62
+
+🟢 <b>BUY</b> <b>HOOD</b> 116.22  <b>PULLBACK</b> LONG ★2
+RSI 54 ADX 17 vol 0.6x 20d +10.9%
+IV 63% IVR 29(est) IV/RV 0.82 PCR 0.85
+BT PASS  n=9 win10 78% avg10 +8.9% t=1.94
+→ <b>LONG_CALL</b> 2027-12-17 (444d) +150C @ 24.45 BE 174.45 Δ0.54
+   size 0x ≈ $0 · IV cheap - buy premium | 1x = $2,445 &gt; 2.0% cap
+   tag EMA20 114.99, RSI 54
+
+&lt;i&gt;below bar:&lt;/i&gt; MSFT PULLBACK ★3 BT:FAIL, UUUU BEARDOWN ★2 BT:FAIL, QQQ PULLBACK ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
