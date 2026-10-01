@@ -241,3 +241,24 @@ BT NA  n=3 win10 67% avg10 +7.3% t=1.02
    ATR5/20 0.77 tight, -3.9% from 20dH
 
 &lt;i&gt;below bar:&lt;/i&gt; UUUU BEARDOWN ★2 BT:FAIL, QQQ PULLBACK ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
+=== 2026-10-01 run
+<b>optscan 2026-10-01 20:31</b>  BUY 1 · SELL 3 · 23 names
+
+🔻 <b>SELL/EXIT</b> QQQ 742.03 — QQQ 710P Jan-27
+   close &gt; EMA50 719.68
+
+🔻 <b>SELL/TRIM</b> AAPL 330.32 — AAPL 315C/320C/-335C Jan-27
+   below EMA20 331.07
+
+🔻 <b>SELL/EXIT</b> GOOGL 338.24 — GOOGL 375C Oct-16
+   close &lt; EMA50 345.27
+
+🟢 <b>BUY</b> <b>PLTR</b> 190.04  <b>COIL</b> LONG ★3
+RSI 63 ADX 27 vol 0.7x 20d +12.1%
+IV 59% IVR 65(est) IV/RV 1.45 PCR 0.77
+BT NA  n=2 win10 100% avg10 +1.9% t=nan
+→ <b>BULL_CALL_SPREAD</b> 2026-11-20 (50d) +200C / -230C @ 7.60 BE 207.60 Δ0.46
+   size 1x ≈ $760 · spread, max 3.9x
+   ATR5/20 0.80 tight, -2.4% from 20dH
+
+&lt;i&gt;below bar:&lt;/i&gt; UUUU BEARDOWN ★2 BT:FAIL, QQQ PULLBACK ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
