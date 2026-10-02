@@ -296,3 +296,29 @@ BT WEAK  n=43 win10 58% avg10 +0.4% t=1.44
    tag EMA20 765.01, RSI 55
 
 &lt;i&gt;below bar:&lt;/i&gt; UUUU BEARDOWN ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
+=== 2026-10-02 run
+<b>optscan 2026-10-02 20:28</b>  BUY 2 · SELL 2 · 23 names
+
+🔻 <b>SELL/EXIT</b> QQQ 749.58 — QQQ 710P Jan-27
+   close &gt; EMA50 720.85
+
+🔻 <b>SELL/EXIT</b> GOOGL 343.50 — GOOGL 375C Oct-16
+   close &lt; EMA50 345.20
+
+🟢 <b>BUY</b> <b>AAPL</b> 333.69  <b>PULLBACK</b> LONG ★2
+RSI 55 ADX 17 vol 0.8x 20d +1.7%
+IV 27% IVR 74(est) IV/RV 1.18 PCR 0.58
+BT WEAK  n=24 win10 58% avg10 +1.4% t=1.16
+→ <b>BULL_CALL_SPREAD</b> 2026-11-20 (49d) +340C / -360C @ 6.55 BE 346.55 Δ0.47
+   size 1x ≈ $655 · IV rich (74) - spread, max 3.1x
+   tag EMA20 331.32, RSI 55
+
+🟢 <b>BUY</b> <b>SPY</b> 769.64  <b>PULLBACK</b> LONG ★2
+RSI 55 ADX 10 vol 1.0x 20d -0.2%
+IV 15% IVR 81(est) IV/RV 1.44 PCR 1.53
+BT WEAK  n=43 win10 58% avg10 +0.4% t=1.44
+→ <b>BULL_CALL_SPREAD</b> 2026-11-30 (59d) +779C / -804C @ 9.46 BE 788.46 Δ0.48
+   size 1x ≈ $946 · IV rich (81) - spread, max 2.6x
+   tag EMA20 765.03, RSI 55
+
+&lt;i&gt;below bar:&lt;/i&gt; UUUU BEARDOWN ★2 BT:FAIL, IWM BEARDOWN ★2 BT:FAIL
