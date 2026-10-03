@@ -43,6 +43,9 @@ def fmt_alert(a: dict) -> str:
         lines.append(f"{tag} RS {a.get('rs_excess', 0):+.0f}% vs SPY · pivot {a['pivot']:.2f} "
                      f"stop {a['stop']:.2f} (-{a['risk_pct']:.1f}%)")
     lines.append(f"BT {a['bt']}  {a['bt_detail']}")
+    if a.get("bayes"):
+        import bayes
+        lines.append(bayes.fmt(a["bayes"]))
     if t["structure"] in ("WATCH", "NONE"):
         lines.append(f"→ {t['structure']}: {t['note']}")
     else:

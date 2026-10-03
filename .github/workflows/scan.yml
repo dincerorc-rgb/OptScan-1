@@ -28,8 +28,8 @@ jobs:
       - name: persist IV history
         run: |
           git config user.name optscan && git config user.email optscan@users.noreply.github.com
-          git add state/iv_history.csv 2>/dev/null || true
-          git diff --cached --quiet || (git commit -m "iv history $(date -u +%F)" && git push)
+          git add state/iv_history.csv state/bayes_log.csv 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "iv history + bayes log $(date -u +%F)" && (git pull --rebase -X theirs || true) && git push)
       - name: push dry-run output to debug branch
         if: github.event_name == 'workflow_dispatch' && contains(github.event.inputs.cmd, '--dry')
         run: |

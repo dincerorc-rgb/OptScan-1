@@ -18,3 +18,21 @@ Note: GitHub pauses schedules after 60 days with no commits; the workflow commit
 - Long alerts show `pivot` and `stop` (10-bar low, max 8% under pivot). Stop is on the **stock**, not the option.
 - TT-pass COIL/BREAKOUT pick 60–120 DTE, 0.65–0.75Δ calls (spread if IV rank ≥70).
 - Tune under `momentum.tt_*` / `options.sepa_*` in config.yaml. Set `tt_enabled: false` to switch off.
+
+## Bayes layer (Oct 2026) — `bayes.py`
+Every BUY alert gets a line like `Bayes 55%→68% (×1.74: TT8 RS+ vol≥2x ADX30 tape+)` and `P(BE) 41% vs mkt 32% → edge +9pp`.
+- **Prior** = this ticker's backtest win-rate for the setup (+10 sessions), shrunk toward 50% when the sample is small.
+- **Signals** = likelihood ratios (TT 8/8, RS vs SPY, volume surge, ADX, hot RSI, Form 4 cluster, P/C, SPY vs EMA50). Combined in log-odds, damped 25% for overlap, capped 0.25×–4×.
+- **Posterior** = `revise_probability(prior, LR)` (odds × LR).
+- **Edge** = model P(stock past breakeven at expiry) − option-implied N(d2). Positive = the contract looks cheap.
+- Sunday `calib-review` scores the log (`state/bayes_log.csv`), shows Brier prior vs posterior, and after 30 resolved alerts learns the LRs into `state/bayes_lr.json`.
+- Tune in `config.yaml → bayes:`. `alert_min_post: 0.55` drops weak BUYs.
+- The calibration log now records the posterior as `p` (and scanner BUY lines are parsed — they weren't before).
+
+## Prediction-market bot (Oct 2026) — `pm_bot.py`
+Polymarket + Kalshi, alerts only. Per market in `pm_markets.yaml`:
+`usable edge = fair − average entry (walked through the order book for your stake) − fees − safety margin`.
+Alerts only when usable edge > 0, with a ¼-Kelly size; says "edge gone" when it closes. Sunday review compares your Brier to the market's.
+1. Actions → **pm-bot** → Run workflow → cmd `discover bitcoin` → slugs arrive on Telegram.
+2. Edit `pm_markets.yaml`: add the slug (or Kalshi ticker), prior, signals, `enabled: true`.
+3. Run with `scan --dry` to check, then it runs itself every 3h.

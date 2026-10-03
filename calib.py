@@ -58,11 +58,14 @@ def _today() -> str:
     return dt.datetime.utcnow().strftime("%Y-%m-%d")
 
 
+_PREFIX = re.compile(r"^[^\w$]*(?:BUY(?:\s+PUTS)?|SELL/[A-Z]+)\s+")
+_BAYES = re.compile(r"Bayes\s+\d{1,3}%→(\d{1,3})%")
 _HEADER = re.compile(r"^[\s*_`•\-|▶►#>\d.)]*\$?([A-Z]{1,5}(?:\.[A-Z])?)\b[\s*_`:]*(?:spot\s*)?\$?(\d{1,6}(?:\.\d{1,4})?)?")
 
 
 def _header(line: str):
     """A line that STARTS with a ticker (e.g. '*PLTR*  spot 174.2', 'MU 1012.00 BREAKOUT')."""
+    line = _PREFIX.sub("", line)   # scanner lines start '🟢 BUY NVDA ...' / '🔴 BUY PUTS ...'
     m = _HEADER.match(line)
     if not m or m.group(1) in _STOPWORDS:
         return None, None
@@ -114,12 +117,14 @@ def parse_signals(text: str, source: str) -> list[dict]:
                 nums[k] = float(m.group(1))
         spot = nums.get("spot", blk["spot"])
         g = grade or ("S" if setup else "C")
+        bm = _BAYES.search(body)          # scanner posterior beats the grade-assumed p
         out.append({
             "ts_utc": dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"),
             "date": _today(), "source": source, "ticker": blk["ticker"], "direction": direction,
             "grade": g, "setup": setup or "", "spot": spot if spot is not None else "",
             "entry": nums.get("entry", ""), "target": nums.get("target", ""),
-            "stop": nums.get("stop", ""), "invalid": "", "p": GRADE_P.get(g, 0.5),
+            "stop": nums.get("stop", ""), "invalid": "",
+            "p": round(int(bm.group(1)) / 100, 2) if bm else GRADE_P.get(g, 0.5),
             "raw": blk["lines"][0].strip()[:160],
         })
     seen, uniq = set(), []

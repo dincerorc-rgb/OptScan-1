@@ -65,6 +65,26 @@ insider:
   window_days: 5
   cluster_score_min: 3.0
 
+bayes:                   # see bayes.py — prior = backtest win10, x evidence LRs
+  prior_shrink_k: 20     # pseudo-trades at 50% mixed into the backtest prior
+  damp: 0.75             # signals overlap -> use 75% of combined log-LR
+  lr_cap: 4.0            # combined multiplier clamped to 0.25x..4x
+  drift_days: 10         # edge applied to option P(BE) over 10 sessions only
+  alert_min_post: 0      # e.g. 0.55 = drop BUY alerts with posterior < 55% (0 = off)
+  learn_min_resolved: 30 # Sunday job learns LRs from outcomes after this many
+  lr:                    # starting multipliers (overridden by state/bayes_lr.json once learned)
+    tt_full: 1.25
+    tt_weak: 0.85
+    rs_with: 1.15
+    rs_against: 0.90
+    vol_surge: 1.20
+    adx_strong: 1.10
+    rsi_hot: 0.85
+    insider: 1.40
+    pcr_against: 0.95
+    tape_with: 1.10
+    tape_against: 0.85
+
 alerts:
   send_no_setup_summary: false   # quiet unless there is a BUY/SELL
   only_on_signal: true

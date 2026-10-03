@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-import backtest, data, insider, notify, options, signals
+import backtest, bayes, data, insider, notify, options, signals
 
 log = logging.getLogger(__name__)
 STATE = Path(__file__).resolve().parent / "state"
@@ -56,7 +56,29 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
     rec["horizon"] = horizon
     rec["tt_exempt"] = t in (mcfg.get("tt_exempt") or []) or not mcfg.get("tt_enabled", True)
     rec["trade"] = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon).as_dict()
+
+    # Bayes layer: backtest prior x evidence LRs -> posterior + fair P(breakeven) vs market
+    try:
+        rec["tape_up"] = _tape_up(cfg)
+        bt_row = r.iloc[0].to_dict() if not r.empty else None
+        rec["bayes"] = bayes.assess(rec, cfg, bt_row)
+    except Exception as e:
+        log.warning("%s bayes failed: %s", t, e)
     return rec
+
+
+_TAPE: dict = {}
+
+
+def _tape_up(cfg: dict) -> bool | None:
+    """SPY above its EMA50 (risk-on tape). Cached per run."""
+    if "v" not in _TAPE:
+        try:
+            c = signals.bench_close(cfg["momentum"].get("tt_bench", "SPY"))
+            _TAPE["v"] = None if c is None else bool(c.iloc[-1] > signals.ema(c, 50).iloc[-1])
+        except Exception:
+            _TAPE["v"] = None
+    return _TAPE["v"]
 
 
 def check_position(p: dict, cfg: dict) -> dict | None:
@@ -111,6 +133,15 @@ def run(cfg: dict, tickers: list[str] | None = None, send: bool = True, min_scor
     (STATE / f"scan_{dt.date.today()}.json").write_text(json.dumps(hits, default=str, indent=1))
 
     alert = [h for h in hits if h["score"] >= min_score and h["bt"] != "FAIL"]
+    bmin = (cfg.get("bayes") or {}).get("alert_min_post", 0) or 0
+    if bmin:
+        alert = [h for h in alert if h.get("bayes", {}).get("post", 1) >= bmin]
+    for h in alert:
+        if h.get("bayes") and send:
+            try:
+                bayes.log(h, h["bayes"])
+            except Exception as e:
+                log.warning("bayes log: %s", e)
 
     exits = []
     for p in cfg.get("positions") or []:
