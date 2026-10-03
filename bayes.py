@@ -41,6 +41,7 @@ DEFAULTS = {
     "rate": 0.045,
     "learn_k": 30,             # pseudo-obs on the default LR when learning
     "horizon": 10,             # sessions; matches backtest win10
+    "margin_pp": 3.0,          # safety margin (pp of probability) for model error
     "lr": {
         "tt_full": 1.25,       # Minervini TT 8/8
         "tt_weak": 0.85,       # TT <= 5/8
@@ -164,7 +165,15 @@ def assess(rec: dict, cfg: dict, bt_row: dict | None = None) -> dict:
         mkt = p_beyond(**kw)
         mdl = p_beyond(**kw, shift_sd=shift, drift_t=b["drift_days"] / 252)
         if math.isfinite(mkt) and math.isfinite(mdl):
-            out.update(p_be_mkt=round(mkt, 3), p_be_mdl=round(mdl, 3), edge_pp=round(100 * (mdl - mkt), 1))
+            # execution: paying spread + commission moves your breakeven further away
+            be_x = t["breakeven"] + sgn * float(t.get("slip") or 0)
+            mdl_x = p_beyond(**{**kw, "be": be_x}, shift_sd=shift, drift_t=b["drift_days"] / 252)
+            raw = 100 * (mdl - mkt)
+            cost = 100 * (mdl - mdl_x) if math.isfinite(mdl_x) else 0.0
+            margin = float(b["margin_pp"])
+            out.update(p_be_mkt=round(mkt, 3), p_be_mdl=round(mdl, 3), edge_pp=round(raw, 1),
+                       cost_pp=round(cost, 1), margin_pp=margin,
+                       usable_pp=round(raw - cost - margin, 1))
     return out
 
 
@@ -176,7 +185,11 @@ SHORT = {"tt_full": "TT8", "tt_weak": "TT≤5", "rs_with": "RS+", "rs_against": 
 def fmt(bz: dict) -> str:
     f = " ".join(SHORT.get(x, x) for x in bz["feats"]) or "no extra signals"
     s = f"Bayes {bz['prior']:.0%}→{bz['post']:.0%} (×{bz['lr']:.2f}: {f})"
-    if "edge_pp" in bz:
+    if "usable_pp" in bz:
+        ok = "✅" if bz["usable_pp"] > 0 else "✖"
+        s += (f"\n   P(BE) {bz['p_be_mdl']:.0%} vs mkt {bz['p_be_mkt']:.0%}: {bz['edge_pp']:+.1f}pp"
+              f" − cost {bz['cost_pp']:.1f} − margin {bz['margin_pp']:.0f} = {bz['usable_pp']:+.1f}pp {ok}")
+    elif "edge_pp" in bz:
         s += f"\n   P(BE) {bz['p_be_mdl']:.0%} vs mkt {bz['p_be_mkt']:.0%} → edge {bz['edge_pp']:+.0f}pp"
     return s
 
@@ -184,7 +197,7 @@ def fmt(bz: dict) -> str:
 # ---------- log + learn ----------
 
 LOG_FIELDS = ["date", "ticker", "setup", "bias", "spot", "prior", "lr", "post", "feats",
-              "p_be_mdl", "p_be_mkt", "edge_pp"]
+              "p_be_mdl", "p_be_mkt", "edge_pp", "usable_pp"]
 
 
 def log(rec: dict, bz: dict, path: Path = LOG) -> None:
@@ -204,7 +217,8 @@ def log(rec: dict, bz: dict, path: Path = LOG) -> None:
         w.writerow({"date": today, "ticker": rec["ticker"], "setup": rec["setup"], "bias": rec["bias"],
                     "spot": rec["close"], "prior": bz["prior"], "lr": bz["lr"], "post": bz["post"],
                     "feats": ";".join(bz["feats"]), "p_be_mdl": bz.get("p_be_mdl", ""),
-                    "p_be_mkt": bz.get("p_be_mkt", ""), "edge_pp": bz.get("edge_pp", "")})
+                    "p_be_mkt": bz.get("p_be_mkt", ""), "edge_pp": bz.get("edge_pp", ""),
+                    "usable_pp": bz.get("usable_pp", "")})
 
 
 def _closes(ticker: str, start: str) -> list[tuple[str, float]]:
@@ -281,10 +295,12 @@ def calibrate(dry: bool = False) -> str:
         L.append(f"hit {hit:.0%} · avg prior {sum(float(r['prior']) for r in res)/len(res):.0%}"
                  f" · avg post {sum(float(r['post']) for r in res)/len(res):.0%}")
         L.append(f"Brier prior {bp:.3f} → post {bq:.3f} " + ("✅ signals add info" if bq < bp else "⚠ signals not helping yet"))
-        e = [r for r in res if r.get("edge_pp") not in ("", None)]
-        pos = [r for r in e if float(r["edge_pp"]) > 0]
+        e = [r for r in res if r.get("usable_pp") not in ("", None)]
+        pos = [r for r in e if float(r["usable_pp"]) > 0]
+        neg = [r for r in e if float(r["usable_pp"]) <= 0]
         if pos:
-            L.append(f"+edge alerts: {len(pos)} → hit {sum(r['outcome'] for r in pos)/len(pos):.0%}")
+            L.append(f"usable edge >0: {len(pos)} → hit {sum(r['outcome'] for r in pos)/len(pos):.0%}"
+                     + (f" · ≤0: {len(neg)} → hit {sum(r['outcome'] for r in neg)/len(neg):.0%}" if neg else ""))
     min_n = (cfg.get("bayes") or {}).get("learn_min_resolved", 30)
     if len(res) >= min_n:
         lr, notes = learn(sc, b)
@@ -307,7 +323,7 @@ def demo() -> None:
     print(f"revise_probability(0.42, 1.62) = {p:.2%}")
     rec = {"ticker": "DEMO", "bias": "LONG", "setup": "BREAKOUT", "close": 100.0, "tt_n": 8, "rs_excess": 12,
            "vol_ratio": 2.4, "adx": 31, "rsi": 66, "insider_score": 0, "pcr": 0.8, "tape_up": True,
-           "atm_iv": 45, "trade": {"structure": "LONG_CALL", "breakeven": 108.0, "dte": 60, "iv": 45}}
+           "atm_iv": 45, "trade": {"structure": "LONG_CALL", "breakeven": 108.0, "dte": 60, "iv": 45, "slip": 0.20}}
     bz = assess(rec, {}, {"n": 22, "win10": 59})
     print(fmt(bz))
 

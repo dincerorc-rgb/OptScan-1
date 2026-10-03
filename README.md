@@ -24,7 +24,7 @@ Every BUY alert gets a line like `Bayes 55%→68% (×1.74: TT8 RS+ vol≥2x ADX3
 - **Prior** = this ticker's backtest win-rate for the setup (+10 sessions), shrunk toward 50% when the sample is small.
 - **Signals** = likelihood ratios (TT 8/8, RS vs SPY, volume surge, ADX, hot RSI, Form 4 cluster, P/C, SPY vs EMA50). Combined in log-odds, damped 25% for overlap, capped 0.25×–4×.
 - **Posterior** = `revise_probability(prior, LR)` (odds × LR).
-- **Edge** = model P(stock past breakeven at expiry) − option-implied N(d2). Positive = the contract looks cheap.
+- **Edge** = model P(stock past breakeven at expiry) − option-implied N(d2), then **usable = edge − cost (half-spreads + $0.65/contract/leg moving your breakeven) − 3pp margin**. ✅ = usable > 0. `alert_min_usable_pp` can filter on it.
 - Sunday `calib-review` scores the log (`state/bayes_log.csv`), shows Brier prior vs posterior, and after 30 resolved alerts learns the LRs into `state/bayes_lr.json`.
 - Tune in `config.yaml → bayes:`. `alert_min_post: 0.55` drops weak BUYs.
 - The calibration log now records the posterior as `p` (and scanner BUY lines are parsed — they weren't before).
@@ -38,3 +38,6 @@ Alerts only when usable edge > 0, sized at 0.2×Kelly on the cost-adjusted proba
 3. Run with `scan --dry` to check, then it runs itself every 3h.
 
 **Positions:** add `position: {yes: 260, no: 235, avg_yes: 0.48, avg_no: 0.49}` to a market. The bot splits it into matched pairs (235 — pay $1 whatever happens, locked P&L = 235 × (1 − pair cost)) and directional exposure (+25 YES — the only money at risk). Alerts then say **add / hold / flip** against the Kelly target instead of sizing blind. `positions` command (and the Sunday review) sends the book: locked, at risk, MTM.
+
+## One book — `book.csv` (Oct 2026)
+`book.csv` is the only place positions live: `netliq` sets option sizing, every row is checked for SELL/TRIM, and the risk gate uses the same rows. `config.yaml positions:` is retired. Columns: `ticker,bias,premium_usd,label` (ticker = underlying to watch, label = what you hold).

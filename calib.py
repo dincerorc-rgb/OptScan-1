@@ -20,7 +20,7 @@ from pathlib import Path
 STATE = Path(os.environ.get("CALIB_STATE", "state"))
 SIGNALS = STATE / "signals.csv"
 UNPARSED = STATE / "unparsed.txt"
-BOOK = Path(os.environ.get("CALIB_BOOK", "book.csv"))
+BOOK = Path(os.environ.get("CALIB_BOOK", Path(__file__).resolve().parent / "book.csv"))
 
 # Prior probability that a signal of this grade "works" (hits target before stop,
 # or is in profit at +5 sessions when no target/stop was given).
@@ -171,7 +171,8 @@ def load_book(path: Path = BOOK) -> dict | None:
                 continue
             elif len(row) >= 3:
                 pos.append({"ticker": row[0].upper(), "bias": row[1].lower(),
-                            "premium": float(row[2].replace(",", "").replace("$", ""))})
+                            "premium": float(row[2].replace(",", "").replace("$", "")),
+                            "label": row[3] if len(row) > 3 else row[0].upper()})
     if not netliq:
         return None
     return {"netliq": netliq, "positions": pos}

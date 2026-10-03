@@ -97,6 +97,7 @@ class Trade:
     contracts: int
     premium_usd: float
     note: str
+    slip: float = 0.0     # $/share paid vs mid: half-spreads of each leg + commissions
 
     def as_dict(self):
         return asdict(self)
@@ -153,6 +154,7 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
         debit = float(long_leg.mid)
         be = long_leg.strike + debit if side == "call" else long_leg.strike - debit
         legs = f"+{long_leg.strike:g}{'C' if side=='call' else 'P'}"
+        slip = float(long_leg.ask - long_leg.mid)
         note = "IV cheap - buy premium" if cheap else "IV mid - outright ok on breakout"
         if horizon == "sepa":
             note = "SEPA: stop on underlying, not option price"
@@ -170,6 +172,7 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
         debit = float(long_leg.mid - sl.mid)
         if debit <= 0:
             return Trade("NONE", "", 0, "", 0, 0, 0, float("nan"), 0, 0, "spread priced <=0, skip")
+        slip = float(long_leg.ask - long_leg.mid) + float(sl.mid - sl.bid)
         structure = "BULL_CALL_SPREAD" if side == "call" else "BEAR_PUT_SPREAD"
         be = long_leg.strike + debit if side == "call" else long_leg.strike - debit
         sym = "C" if side == "call" else "P"
@@ -177,12 +180,14 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
         width = abs(sl.strike - long_leg.strike)
         note = f"IV rich ({ivr:.0f}) - spread, max {width/debit:.1f}x" if rich else f"spread, max {width/debit:.1f}x"
 
+    legs_n = 2 if "/" in legs else 1
+    slip = max(slip, 0.0) + legs_n * ocfg.get("commission_per_contract", 0.65) / 100
     n, usd = _size(debit, acct)
     if n == 0:
         note += f" | 1x = ${debit*100:,.0f} > {acct['max_premium_pct']}% cap"
     return Trade(structure, str(long_leg.expiry), int(long_leg.dte), legs, round(debit, 2),
                  round(float(be), 2), round(float(long_leg.delta), 2), round(float(long_leg.iv) * 100, 1),
-                 n, usd, note)
+                 n, usd, note, round(slip, 3))
 
 
 def analyse(ticker: str, spot: float, rv_series: pd.Series, ocfg: dict) -> dict:

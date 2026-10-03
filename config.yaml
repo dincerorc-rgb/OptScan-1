@@ -1,5 +1,5 @@
 account:
-  net_liq: 50000          # USD - edit
+  net_liq: 50000          # fallback only — real value comes from book.csv netliq
   max_premium_pct: 2.0    # per-position premium cap (%)
 
 watchlist:
@@ -59,6 +59,7 @@ options:
   iv_rich_rank: 70           # IV rank above -> spreads / short-vol only
   min_open_interest: 200
   max_spread_pct: 0.10       # bid/ask spread cap as fraction of mid
+  commission_per_contract: 0.65   # IBKR per contract per leg, counted in option edge
 
 insider:
   enabled: true
@@ -71,6 +72,8 @@ bayes:                   # see bayes.py — prior = backtest win10, x evidence L
   lr_cap: 4.0            # combined multiplier clamped to 0.25x..4x
   drift_days: 10         # edge applied to option P(BE) over 10 sessions only
   alert_min_post: 0      # e.g. 0.55 = drop BUY alerts with posterior < 55% (0 = off)
+  margin_pp: 3           # safety margin on option edge (pp) — usable = edge − spread/commission − margin
+  # alert_min_usable_pp: 0   # uncomment to drop BUY alerts whose usable option edge is below this
   learn_min_resolved: 30 # Sunday job learns LRs from outcomes after this many
   lr:                    # starting multipliers (overridden by state/bayes_lr.json once learned)
     tt_full: 1.25
@@ -89,11 +92,5 @@ alerts:
   send_no_setup_summary: false   # quiet unless there is a BUY/SELL
   only_on_signal: true
 
-# open positions -> SELL/TRIM alerts when trend breaks or gets extended
-positions:
-  - {ticker: QQQ,  side: SHORT, label: "QQQ 710P Jan-27"}
-  - {ticker: AAPL, side: LONG,  label: "AAPL 315C/320C/-335C Jan-27"}
-  - {ticker: GOOGL, side: LONG, label: "GOOGL 375C Oct-16"}
-  - {ticker: PLTR, side: LONG,  label: "PTIR 50sh"}
-  - {ticker: MU,   side: LONG,  label: "MUU 80sh"}
-  - {ticker: MSTR, side: LONG,  label: "MSTX 100sh"}
+# open positions + net liq now live in book.csv (one book for scanner, risk gate and sizing).
+# account.net_liq above is only used if book.csv is missing.

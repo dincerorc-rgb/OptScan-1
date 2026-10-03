@@ -111,8 +111,28 @@ def check_position(p: dict, cfg: dict) -> dict | None:
             "close": round(c, 2), "rsi": round(float(d.rsi), 0), "why": why}
 
 
+def book_positions(cfg: dict) -> list[dict]:
+    """book.csv is the single book: sets net liq for sizing and the SELL/TRIM list.
+    Falls back to config.yaml `positions:` only if book.csv is missing."""
+    import calib
+    bk = calib.load_book()
+    if not bk:
+        return cfg.get("positions") or []
+    cfg["account"]["net_liq"] = bk["netliq"]
+    merged: dict[tuple, dict] = {}
+    for p in bk["positions"]:
+        side = "SHORT" if p["bias"] == "short" else "LONG"
+        k = (p["ticker"], side)
+        if k in merged:
+            merged[k]["label"] += " + " + p["label"]
+        else:
+            merged[k] = {"ticker": p["ticker"], "side": side, "label": p["label"]}
+    return list(merged.values())
+
+
 def run(cfg: dict, tickers: list[str] | None = None, send: bool = True, min_score: int = 2) -> list[dict]:
     tickers = tickers or cfg["watchlist"]
+    positions = book_positions(cfg)
     hits, flat, errors = [], [], []
     for t in tickers:
         try:
@@ -136,6 +156,9 @@ def run(cfg: dict, tickers: list[str] | None = None, send: bool = True, min_scor
     bmin = (cfg.get("bayes") or {}).get("alert_min_post", 0) or 0
     if bmin:
         alert = [h for h in alert if h.get("bayes", {}).get("post", 1) >= bmin]
+    emin = (cfg.get("bayes") or {}).get("alert_min_usable_pp")
+    if emin is not None:
+        alert = [h for h in alert if h.get("bayes", {}).get("usable_pp", emin) >= emin]
     for h in alert:
         if h.get("bayes") and send:
             try:
@@ -144,7 +167,7 @@ def run(cfg: dict, tickers: list[str] | None = None, send: bool = True, min_scor
                 log.warning("bayes log: %s", e)
 
     exits = []
-    for p in cfg.get("positions") or []:
+    for p in positions:
         try:
             x = check_position(p, cfg)
             if x:
