@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       cmd:
-        description: "scan | scan --dry | discover <words> | review"
+        description: "scan | scan --dry | positions | discover <words> | review"
         default: "scan --dry"
 
 permissions:

@@ -32,7 +32,9 @@ Every BUY alert gets a line like `Bayes 55%→68% (×1.74: TT8 RS+ vol≥2x ADX3
 ## Prediction-market bot (Oct 2026) — `pm_bot.py`
 Polymarket + Kalshi, alerts only. Per market in `pm_markets.yaml`:
 `usable edge = fair − average entry (walked through the order book for your stake) − fees − safety margin`.
-Alerts only when usable edge > 0, with a ¼-Kelly size; says "edge gone" when it closes. Sunday review compares your Brier to the market's.
+Alerts only when usable edge > 0, sized at 0.2×Kelly on the cost-adjusted probability; says "edge gone" when it closes. Sunday review compares your Brier to the market's.
 1. Actions → **pm-bot** → Run workflow → cmd `discover bitcoin` → slugs arrive on Telegram.
 2. Edit `pm_markets.yaml`: add the slug (or Kalshi ticker), prior, signals, `enabled: true`.
 3. Run with `scan --dry` to check, then it runs itself every 3h.
+
+**Positions:** add `position: {yes: 260, no: 235, avg_yes: 0.48, avg_no: 0.49}` to a market. The bot splits it into matched pairs (235 — pay $1 whatever happens, locked P&L = 235 × (1 − pair cost)) and directional exposure (+25 YES — the only money at risk). Alerts then say **add / hold / flip** against the Kelly target instead of sizing blind. `positions` command (and the Sunday review) sends the book: locked, at risk, MTM.
