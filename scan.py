@@ -16,7 +16,7 @@ STATE = Path(__file__).resolve().parent / "state"
 
 def scan_ticker(t: str, cfg: dict) -> dict | None:
     mcfg, ocfg, acct = cfg["momentum"], cfg["options"], cfg["account"]
-    bars = data.daily_bars(t, 2)
+    bars = data.daily_bars(t, 3)  # 3y: TT needs ~270 warm-up bars
     st = signals.latest_setup(t, bars, mcfg)
     rec = st.as_dict()
 
@@ -45,7 +45,15 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
             rec["score"] = min(rec["score"] + 1, 5)
             rec["reason"] += f"; insider cluster {ins['score']}"
 
-    horizon = "leaps" if st.setup in ("PULLBACK", "COIL") and rec["iv_rank"] <= ocfg["iv_cheap_rank"] else "swing"
+    sepa = (st.bias == "LONG" and st.setup in ("COIL", "BREAKOUT")
+            and st.tt_n >= mcfg.get("tt_min_rules", 8) and t not in (mcfg.get("tt_exempt") or []))
+    if sepa:
+        horizon = "sepa"
+    elif st.setup in ("PULLBACK", "COIL") and rec["iv_rank"] <= ocfg["iv_cheap_rank"]:
+        horizon = "leaps"
+    else:
+        horizon = "swing"
+    rec["horizon"] = horizon
     rec["trade"] = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon).as_dict()
     return rec
 

@@ -37,10 +37,22 @@ momentum:
   vol_mult: 1.5          # volume vs 20d avg
   atr_contraction: 0.8   # ATR5/ATR20 below = coiled (pre-break)
   pullback_ema_tol: 0.02 # within 2% of EMA20 = pullback entry
+  # --- Minervini SEPA layer ---
+  tt_enabled: true
+  tt_min_rules: 8               # Trend Template rules required (of 8)
+  tt_require_for: [COIL]        # COIL only fires on TT pass (= VCP)
+  tt_bonus_for: [BREAKOUT, PULLBACK, COIL]  # +1 score on TT pass
+  tt_exempt: [QQQ, SPY, IWM]    # index ETFs keep old behaviour
+  tt_bench: SPY                 # RS benchmark
+  tt_sma200_rising_bars: 21     # SMA200 must be above its value 1 month ago
+  tt_max_stop_pct: 8            # stop never more than 8% under pivot
+  tt_vol_dry: 0.8               # 5d vol / 50d vol below = dry-up bonus
 
 options:
   swing_dte: [30, 90]        # target expiry window for swing calls
   leaps_dte: [300, 500]      # LEAPS window
+  sepa_dte: [60, 120]        # SEPA (TT-pass COIL/BREAKOUT) swing window
+  sepa_delta: [0.65, 0.75]   # ITM-ish calls so a 5-8% stock stop isn't a 50% option loss
   long_call_delta: [0.40, 0.55]
   spread_short_delta: 0.25
   iv_cheap_rank: 40          # IV rank below -> outright long premium OK

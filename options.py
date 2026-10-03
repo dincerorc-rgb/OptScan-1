@@ -132,8 +132,12 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
     if bias == "FLAT" or setup in ("NONE", "EXTENDED") or chain.empty:
         return Trade("WATCH", "", 0, "", 0, 0, 0, float("nan"), 0, 0, "no entry / manage existing")
 
-    dte_lo, dte_hi = ocfg["leaps_dte"] if horizon == "leaps" else ocfg["swing_dte"]
-    d_lo, d_hi = ocfg["long_call_delta"]
+    if horizon == "sepa":
+        dte_lo, dte_hi = ocfg.get("sepa_dte", [60, 120])
+        d_lo, d_hi = ocfg.get("sepa_delta", [0.65, 0.75])
+    else:
+        dte_lo, dte_hi = ocfg["leaps_dte"] if horizon == "leaps" else ocfg["swing_dte"]
+        d_lo, d_hi = ocfg["long_call_delta"]
     side = "call" if bias == "LONG" else "put"
     long_leg = _pick(chain, side, spot, dte_lo, dte_hi, d_lo, d_hi, ocfg)
     if long_leg is None:
@@ -144,12 +148,14 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
     cheap = np.isfinite(ivr) and ivr <= ocfg["iv_cheap_rank"]
 
     # Outright long premium only when IV is not rich; otherwise debit spread.
-    if not rich and (cheap or setup == "BREAKOUT"):
+    if not rich and (cheap or setup == "BREAKOUT" or horizon == "sepa"):
         structure = "LONG_CALL" if side == "call" else "LONG_PUT"
         debit = float(long_leg.mid)
         be = long_leg.strike + debit if side == "call" else long_leg.strike - debit
         legs = f"+{long_leg.strike:g}{'C' if side=='call' else 'P'}"
         note = "IV cheap - buy premium" if cheap else "IV mid - outright ok on breakout"
+        if horizon == "sepa":
+            note = "SEPA: stop on underlying, not option price"
     else:
         short = chain[(chain.side == side) & (chain.expiry == long_leg.expiry)].copy()
         short["delta"] = [bs_delta(spot, k, d, v, side) for k, d, v in zip(short.strike, short.dte, short.iv)]

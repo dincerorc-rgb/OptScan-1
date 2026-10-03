@@ -38,6 +38,10 @@ def fmt_alert(a: dict) -> str:
     ]
     if a.get("insider_score", 0) >= 1:
         lines.append(f"Form4 cluster {a['insider_score']} ({a['insider_n']} insiders ${a['insider_usd']/1e6:.1f}M)")
+    if a.get("bias") == "LONG" and a.get("pivot") == a.get("pivot"):  # not NaN
+        tag = "SEPA ✅" if a.get("horizon") == "sepa" else f"TT {a.get('tt_n', 0)}/8"
+        lines.append(f"{tag} RS {a.get('rs_excess', 0):+.0f}% vs SPY · pivot {a['pivot']:.2f} "
+                     f"stop {a['stop']:.2f} (-{a['risk_pct']:.1f}%)")
     lines.append(f"BT {a['bt']}  {a['bt_detail']}")
     if t["structure"] in ("WATCH", "NONE"):
         lines.append(f"→ {t['structure']}: {t['note']}")
