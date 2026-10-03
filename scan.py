@@ -54,6 +54,7 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
     else:
         horizon = "swing"
     rec["horizon"] = horizon
+    rec["tt_exempt"] = t in (mcfg.get("tt_exempt") or []) or not mcfg.get("tt_enabled", True)
     rec["trade"] = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon).as_dict()
     return rec
 
