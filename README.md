@@ -41,3 +41,13 @@ Alerts only when usable edge > 0, sized at 0.2×Kelly on the cost-adjusted proba
 
 ## One book — `book.csv` (Oct 2026)
 `book.csv` is the only place positions live: `netliq` sets option sizing, every row is checked for SELL/TRIM, and the risk gate uses the same rows. `config.yaml positions:` is retired. Columns: `ticker,bias,premium_usd,label` (ticker = underlying to watch, label = what you hold).
+
+## Build list (agreed Oct 2026, not built yet)
+1. **SEPA / QM split** — tag alerts `[SEPA]` / `[QM]`, separate exits + stats.
+2. **Tradier paper bot** — SEPA via options (needs secret `TRADIER_SANDBOX_TOKEN`).
+3. **Trading 212 paper bot** — SEPA via shares, stop held at broker (needs `T212_DEMO_KEY`).
+4. **TradingView webhook → OptScan** — your hand-drawn pivots/alerts trigger the paper bot.
+   TradingView can't call GitHub directly (no auth header), so: TradingView alert → free Cloudflare Worker relay
+   (checks a secret phrase in the message) → GitHub `repository_dispatch` → `tv_signal.py` → gate → paper order + Telegram.
+   Needs: TradingView paid plan (webhooks), 2FA on TradingView, a Cloudflare account, a GitHub fine-grained token.
+5. Minervini rules enrichment from uploaded material (sell rules, VCP specifics, sizing, market regime).
