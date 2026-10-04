@@ -60,6 +60,9 @@ Win rate isn't the goal — **expectancy (avg R per trade)** is. 1R = entry − 
 - **Options**: SEPA expiries moved to 75–150 DTE so an 8-week hold doesn't run into theta decay.
 - Needs `entry,stop,entry_date` on `book.csv` rows to manage open positions.
 
+## Rulebook
+See **RULES.md**: v1 frozen 4 Oct 2026; changes only at quarterly reviews with data.
+
 ## Build list (agreed Oct 2026, not built yet)
 1. **SEPA / QM split** — tag alerts `[SEPA]` / `[QM]`, separate exits + stats.
 2. **Tradier paper bot** — SEPA via options (needs secret `TRADIER_SANDBOX_TOKEN`).
