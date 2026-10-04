@@ -51,6 +51,9 @@ def fmt_alert(a: dict) -> str:
         lines.append(f"R plan: entry {pl['entry']:.2f} stop {pl['stop']:.2f} (1R {pl['R']:.2f} = {pl['risk_pct']:.1f}%)"
                      f" · BE-stop @ {pl['be_at']:.2f} (+2R) · tgt {pl['t1']:.2f} (+3R, sell ⅓) · trail EMA50")
         sz = f"   risk ${pl['risk_usd']:,.0f}/trade → shares {pl['shares']}"
+        if pl.get("pyr") and pl["shares"] >= 2:
+            a, b2, c2 = (pl["pyr"] + [0, 0, 0])[:3]
+            sz += f" (buy {a} at pivot, +{b2} at +2–3%, +{c2} at +4–5%; ≤5% above pivot)"
         if "contracts_risk" in pl:
             sz += f" · options {pl['contracts_risk']}x (≈${pl['opt_loss_1x']:,.0f} lost/contract at stop)"
         lines.append(sz)

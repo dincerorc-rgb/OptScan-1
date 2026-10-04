@@ -52,6 +52,14 @@ Win rate isn't the goal — **expectancy (avg R per trade)** is. 1R = entry − 
 - **Positions in R**: add `entry,stop` (stock prices) to a `book.csv` row → stop hit = EXIT, +2R = MOVE STOP to breakeven, +3R = sell ⅓.
 - Alerts are tagged `/SEPA` (Trend Template 8/8) or `/QM` (momentum breakout without TT) in the signal log.
 
+## William O'Neil big-winner rules (Oct 2026) — `config.yaml → oneil:`
+- **Pyramid**: R plan splits shares 50% at pivot / 30% at +2–3% / 20% at +4–5%. Never add below entry, never above +5% (buy zone). Open positions in the zone get an **ADD** alert.
+- **8-week hold**: position up **+20% within 3 weeks** of `entry_date` → **HOLD** until 8 weeks after entry; TRIM/RSI signals suppressed; exits only if it falls back to cost or on a climax.
+- **Cut losses 7–8%**: stops capped at 8% (gate blocks wider).
+- **Climax run → SELL INTO STRENGTH**: +25% in 15 sessions plus 2 of: ≥70% above 200d SMA, volume ≥2x, widest range in 3 months, exhaustion gap. Climaxing names get −2★ and "no new entry" on scanner alerts.
+- **Options**: SEPA expiries moved to 75–150 DTE so an 8-week hold doesn't run into theta decay.
+- Needs `entry,stop,entry_date` on `book.csv` rows to manage open positions.
+
 ## Build list (agreed Oct 2026, not built yet)
 1. **SEPA / QM split** — tag alerts `[SEPA]` / `[QM]`, separate exits + stats.
 2. **Tradier paper bot** — SEPA via options (needs secret `TRADIER_SANDBOX_TOKEN`).

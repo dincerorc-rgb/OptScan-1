@@ -51,7 +51,7 @@ momentum:
 options:
   swing_dte: [30, 90]        # target expiry window for swing calls
   leaps_dte: [300, 500]      # LEAPS window
-  sepa_dte: [60, 120]        # SEPA (TT-pass COIL/BREAKOUT) swing window
+  sepa_dte: [75, 150]        # SEPA window: >= 8-week hold (O'Neil) + buffer before theta accelerates
   sepa_delta: [0.65, 0.75]   # ITM-ish calls so a 5-8% stock stop isn't a 50% option loss
   long_call_delta: [0.40, 0.55]
   spread_short_delta: 0.25
@@ -71,6 +71,17 @@ risk:                    # Minervini: expectancy, not win rate. 1R = entry − s
   breakeven_at_r: 2      # at +2R move the stop to entry — a 2R winner never becomes a loser
   scale_at_r: 3          # at +3R sell ⅓, trail the rest on EMA50
   # stops: max 8% under entry (signals.tt_max_stop_pct); gate BLOCKs R:R < 2, WARNs < 3
+
+oneil:                   # William O'Neil big-winner rules (positions need entry,stop,entry_date in book.csv)
+  pyramid: [0.5, 0.3, 0.2]   # initial 50% at pivot, add 30% then 20% only as it proves itself
+  add_zone: [0.02, 0.05]     # adds allowed +2%..+5% above entry; never below entry, never chase >5%
+  hold_gain: 0.20            # +20% within 3 weeks of breakout ->
+  hold_weeks: 8              #   hold 8 weeks from entry (only stop/climax can override)
+  climax:                    # sell into strength when 3+ of: (gain is required)
+    days: 15                 #   gain over the last 15 sessions >= gain
+    gain: 0.25
+    ext_200: 0.70            #   close >= 70% above 200d SMA (late-stage)
+                             #   + volume >= 2x, widest daily range in 3 months, exhaustion gap
 
 bayes:                   # see bayes.py — prior = backtest win10, x evidence LRs
   prior_shrink_k: 20     # pseudo-trades at 50% mixed into the backtest prior

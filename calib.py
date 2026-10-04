@@ -189,7 +189,8 @@ def load_book(path: Path = BOOK) -> dict | None:
                             "premium": float(row[2].replace(",", "").replace("$", "")),
                             "label": row[3] if len(row) > 3 else row[0].upper(),
                             "entry": _num(row[4]) if len(row) > 5 else None,
-                            "stop": _num(row[5]) if len(row) > 5 else None})
+                            "stop": _num(row[5]) if len(row) > 5 else None,
+                            "entry_date": row[6] if len(row) > 6 else None})
     if not netliq:
         return None
     return {"netliq": netliq, "positions": pos}

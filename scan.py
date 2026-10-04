@@ -57,6 +57,12 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
     rec["tt_exempt"] = t in (mcfg.get("tt_exempt") or []) or not mcfg.get("tt_enabled", True)
     rec["trade"] = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon).as_dict()
 
+    if st.bias == "LONG":
+        d_ = signals.enrich(bars, mcfg).dropna().iloc[-1]
+        cl = climax(bars, d_, (cfg.get("oneil") or {}).get("climax") or {})
+        if cl:   # O'Neil: climax is where you SELL, never a new entry
+            rec["score"] = max(rec["score"] - 2, 0)
+            rec["reason"] += f"; ⚠ climax run ({cl}) — no new entry"
     rec["plan"] = r_plan(rec, cfg)
 
     # Bayes layer: backtest prior x evidence LRs -> posterior + fair P(breakeven) vs market
@@ -83,6 +89,8 @@ def r_plan(rec: dict, cfg: dict) -> dict | None:
             "be_at": round(piv + rk.get("breakeven_at_r", 2) * R, 2),
             "t1": round(piv + rk.get("scale_at_r", 3) * R, 2), "risk_usd": round(risk_usd, 0),
             "shares": int(risk_usd // R)}
+    pyr = (cfg.get("oneil") or {}).get("pyramid", [0.5, 0.3, 0.2])
+    plan["pyr"] = [max(int(plan["shares"] * f), 0) for f in pyr]
     t = rec.get("trade") or {}
     if t.get("structure") not in (None, "WATCH", "NONE") and t.get("delta"):
         # option loss if the stock falls to the stop ~ delta x R per share (ignores theta/vega)
@@ -111,23 +119,75 @@ def _tape_up(cfg: dict) -> bool | None:
     return _TAPE["v"]
 
 
+def climax(bars, d, ccfg: dict) -> str | None:
+    """O'Neil climax run: big fast gain late in an extended move, on volume -> sell into strength."""
+    c = bars["close"]
+    if len(c) < 20:
+        return None
+    gain = c.iloc[-1] / c.iloc[-1 - ccfg.get("days", 15)] - 1
+    if gain < ccfg.get("gain", 0.25):
+        return None
+    ext = c.iloc[-1] / d.sma200 - 1 if d.sma200 == d.sma200 and d.sma200 else 0
+    rng = (bars["high"] - bars["low"]) / c
+    widest = rng.iloc[-1] >= rng.tail(63).max() * 0.999
+    gap = bars["open"].iloc[-1] > bars["high"].iloc[-2] * 1.02
+    marks = [f"+{gain:.0%} in {ccfg.get('days', 15)}d"]
+    if ext >= ccfg.get("ext_200", 0.70):
+        marks.append(f"{ext:.0%} above 200d")
+    if d.vol_ratio >= 2:
+        marks.append(f"vol {d.vol_ratio:.1f}x")
+    if widest:
+        marks.append("widest range in 3m")
+    if gap:
+        marks.append("exhaustion gap")
+    return ", ".join(marks) if len(marks) >= 3 else None
+
+
 def check_position(p: dict, cfg: dict) -> dict | None:
-    """SELL/TRIM signal for an open position on trend break / extension."""
-    bars = data.daily_bars(p["ticker"], 1)
+    """SELL/TRIM/ADD/HOLD for an open position: R stop, O'Neil 8-week hold, climax, pyramid, trend breaks."""
+    import datetime as _dt
+    bars = data.daily_bars(p["ticker"], 2)
     d = signals.enrich(bars, cfg["momentum"]).dropna().iloc[-1]
     c, side = float(d.close), p["side"]
     act, why = None, ""
+    rk = cfg.get("risk") or {}
+    on = cfg.get("oneil") or {}
+    out = lambda a, w: {"ticker": p["ticker"], "label": p.get("label", ""), "side": side, "action": a,
+                        "close": round(c, 2), "rsi": round(float(d.rsi), 0), "why": w}
     e, st = p.get("entry"), p.get("stop")
     if e and st and e != st:
         sg = 1 if side == "LONG" else -1
         r = sg * (c - e) / abs(e - st)
-        rk = cfg.get("risk") or {}
         if sg * (c - st) <= 0:
-            return {"ticker": p["ticker"], "label": p.get("label", ""), "side": side, "action": "EXIT",
-                    "close": round(c, 2), "rsi": round(float(d.rsi), 0), "why": f"STOP {st:g} hit ({r:+.1f}R) — no hesitation"}
-        if r >= rk.get("scale_at_r", 3):
+            return out("EXIT", f"STOP {st:g} hit ({r:+.1f}R) — no hesitation")
+        if side == "LONG":
+            gain = c / e - 1
+            # O'Neil 8-week hold: +20% within 3 weeks of entry = potential leader -> hold 8 weeks
+            ed = p.get("entry_date")
+            if ed:
+                ed = _dt.date.fromisoformat(ed)
+                since = bars[bars.index.date >= ed]
+                wk = (_dt.date.today() - ed).days / 7
+                fast = len(since) and (since["high"].iloc[:15].max() / e - 1) >= on.get("hold_gain", 0.20)
+                if fast and wk < on.get("hold_weeks", 8):
+                    if c <= e:
+                        return out("EXIT", f"8-wk hold candidate fell back to cost {e:g} — a +20% winner never becomes a loss")
+                    cl = climax(bars, d, on.get("climax") or {})
+                    if cl:
+                        return out("SELL INTO STRENGTH", f"climax run ({cl}) — overrides 8-wk hold")
+                    return out("HOLD", f"8-WEEK HOLD to {ed + _dt.timedelta(weeks=on.get('hold_weeks', 8))}"
+                                       f" (+{gain:.0%}, hit +20% in <3wk). Ignore TRIM/RSI; exit only below cost {e:g} or on climax")
+            cl = climax(bars, d, on.get("climax") or {})
+            if cl:
+                return out("SELL INTO STRENGTH", f"climax run: {cl} — sell most into the buying")
+            # pyramid: add only while it proves itself, inside the buy zone
+            lo, hi = on.get("add_zone", [0.02, 0.05])
+            if lo <= gain <= hi:
+                act, why = "ADD", (f"+{gain:.1%} above entry {e:g} (zone +{lo:.0%}–{hi:.0%}) — pyramid "
+                                   f"30% then 20% of planned size; never add below entry")
+        if not act and r >= rk.get("scale_at_r", 3):
             act, why = "TRIM", f"{r:+.1f}R — sell ⅓, trail rest on EMA50 {d.ema_s:.2f}"
-        elif r >= rk.get("breakeven_at_r", 2) and sg * (st - e) < 0:
+        elif not act and r >= rk.get("breakeven_at_r", 2) and sg * (st - e) < 0:
             act, why = "MOVE STOP", f"{r:+.1f}R — raise stop to breakeven {e:g}"
     if act:
         pass
@@ -171,7 +231,7 @@ def book_positions(cfg: dict) -> list[dict]:
             merged[k]["label"] += " + " + p["label"]
         else:
             merged[k] = {"ticker": p["ticker"], "side": side, "label": p["label"],
-                         "entry": p.get("entry"), "stop": p.get("stop")}
+                         "entry": p.get("entry"), "stop": p.get("stop"), "entry_date": p.get("entry_date")}
     return list(merged.values())
 
 
