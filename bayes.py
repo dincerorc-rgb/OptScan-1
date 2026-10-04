@@ -42,6 +42,8 @@ DEFAULTS = {
     "learn_k": 30,             # pseudo-obs on the default LR when learning
     "horizon": 10,             # sessions; matches backtest win10
     "margin_pp": 3.0,          # safety margin (pp of probability) for model error
+    "avg_win_r": 2.0,          # assumed avg winner in R until the Sunday review measures it
+    "avg_loss_r": 1.0,         # loser = stop = -1R (gaps make it worse; review shows the real number)
     "lr": {
         "tt_full": 1.25,       # Minervini TT 8/8
         "tt_weak": 0.85,       # TT <= 5/8
@@ -149,7 +151,9 @@ def assess(rec: dict, cfg: dict, bt_row: dict | None = None) -> dict:
     feats = evidence(rec, cfg)
     lr = combine(feats, b)
     post = revise_probability(prior, lr)
+    exp_r = post * b["avg_win_r"] - (1 - post) * b["avg_loss_r"]
     out = {"prior": round(prior, 3), "lr": round(lr, 2), "post": round(post, 3), "feats": feats,
+           "exp_r": round(exp_r, 2),
            "prior_src": f"BT n={n}" if n else "flat 50%", "learned": b.get("learned", False)}
 
     t = rec.get("trade") or {}
@@ -185,6 +189,8 @@ SHORT = {"tt_full": "TT8", "tt_weak": "TT≤5", "rs_with": "RS+", "rs_against": 
 def fmt(bz: dict) -> str:
     f = " ".join(SHORT.get(x, x) for x in bz["feats"]) or "no extra signals"
     s = f"Bayes {bz['prior']:.0%}→{bz['post']:.0%} (×{bz['lr']:.2f}: {f})"
+    if "exp_r" in bz:
+        s += f" · E[R] {bz['exp_r']:+.2f}R"
     if "usable_pp" in bz:
         ok = "✅" if bz["usable_pp"] > 0 else "✖"
         s += (f"\n   P(BE) {bz['p_be_mdl']:.0%} vs mkt {bz['p_be_mkt']:.0%}: {bz['edge_pp']:+.1f}pp"

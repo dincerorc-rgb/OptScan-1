@@ -34,6 +34,9 @@ MAX_TICKER_PCT = 0.25     # existing exposure in one ticker > 25% -> BLOCK adds
 MAX_OPEN_PCT = 0.60       # total open premium > 60% of net liq -> BLOCK new debits
 LONG_SKEW_WARN = 0.80     # >=80% of book premium bullish and signal is CALL -> WARN
 ATR_MULT = 1.5            # fallback invalidation = entry -/+ 1.5 x ATR14
+RR_BLOCK = 2.0            # Minervini: reward:risk below 2 -> BLOCK
+RR_WARN = 3.0             #            below 3 -> WARN (aim for 3:1+)
+MAX_STOP_PCT = 8.0        # stop more than 8% under entry -> BLOCK
 
 FIELDS = ["ts_utc", "date", "source", "ticker", "direction", "grade", "setup",
           "spot", "entry", "target", "stop", "invalid", "p", "raw"]
@@ -41,7 +44,7 @@ FIELDS = ["ts_utc", "date", "source", "ticker", "direction", "grade", "setup",
 SETUPS = ("BREAKOUT", "COIL", "PULLBACK", "EXTENDED", "BEARDOWN")
 _NUM = r"\$?(\d{1,6}(?:\.\d{1,4})?)"
 _KV = {
-    "entry": re.compile(r"\b(?:entry|ent|buy|@)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
+    "entry": re.compile(r"\b(?:entry|ent|buy|pivot|@)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
     "target": re.compile(r"\b(?:target|tgt|tp1?|t1)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
     "stop": re.compile(r"\b(?:stop|sl|stp|inval(?:id)?)\s*[:=≤≥<>]?\s*" + _NUM, re.I),
     "spot": re.compile(r"\b(?:spot|px|last|close)\s*[:=]?\s*" + _NUM, re.I),
@@ -51,7 +54,7 @@ _VERDICT = re.compile(r"\b(CALL|PUT|NONE)\b\s*[:\-–(]?\s*(?:grade\s*)?\(?([ABC
 _STOPWORDS = {"CALL", "PUT", "NONE", "GEX", "OI", "PC", "IV", "ATM", "OTM", "ITM", "DTE",
               "ET", "UTC", "AEST", "TP", "SL", "BUY", "SELL", "MAP", "MAX", "PAIN", "FLIP",
               "WALL", "A", "B", "C", "D", "S", "US", "USD", "NEW", "IVR", "RSI", "EMA",
-              "ATR", "BE", "R", "OK", "WARN", "BLOCK", "GRADE", "TOP", "LOW", "HIGH", "PCR", "BT", "ADX", "RV", "CW", "PW", "MP", "P", "SPOT", "UTC", "OPTIONS", "WATCH", "LONG", "SHORT", "BULL", "BEAR", "NET", "VOL", "AND"} | set(SETUPS)
+              "ATR", "BE", "R", "OK", "WARN", "BLOCK", "GRADE", "TOP", "LOW", "HIGH", "PCR", "BT", "ADX", "RV", "CW", "PW", "MP", "P", "SPOT", "UTC", "OPTIONS", "WATCH", "LONG", "SHORT", "BULL", "BEAR", "NET", "VOL", "AND", "SEPA", "VCP", "TT", "RS", "SPY", "QM", "STOP", "MOVE", "EXIT", "TRIM", "TGT", "E"} | set(SETUPS)
 
 
 def _today() -> str:
@@ -87,6 +90,9 @@ def parse_signals(text: str, source: str) -> list[dict]:
     lines = _clean(text).splitlines()
     blocks, cur = [], None
     for line in lines:
+        if re.match(r"^[^\w$]*SELL/", line):     # SELL/EXIT/TRIM lines are exits, not new signals
+            cur = None
+            continue
         t, sp = _header(line)
         if t:
             cur = {"ticker": t, "spot": sp, "lines": [line]}
@@ -117,6 +123,8 @@ def parse_signals(text: str, source: str) -> list[dict]:
                 nums[k] = float(m.group(1))
         spot = nums.get("spot", blk["spot"])
         g = grade or ("S" if setup else "C")
+        if setup and setup != "BEARDOWN":
+            setup += "/SEPA" if re.search(r"SEPA ✅|VCP/SEPA", body) else "/QM"
         bm = _BAYES.search(body)          # scanner posterior beats the grade-assumed p
         out.append({
             "ts_utc": dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"),
@@ -149,6 +157,13 @@ def invalidation(sig: dict, atr: float | None = None) -> tuple[float | None, str
 
 
 # ---- book + gate ------------------------------------------------------------
+def _num(x):
+    try:
+        return float(str(x).replace(",", "").replace("$", ""))
+    except ValueError:
+        return None
+
+
 def load_book(path: Path = BOOK) -> dict | None:
     """book.csv:
          netliq,25000
@@ -172,7 +187,9 @@ def load_book(path: Path = BOOK) -> dict | None:
             elif len(row) >= 3:
                 pos.append({"ticker": row[0].upper(), "bias": row[1].lower(),
                             "premium": float(row[2].replace(",", "").replace("$", "")),
-                            "label": row[3] if len(row) > 3 else row[0].upper()})
+                            "label": row[3] if len(row) > 3 else row[0].upper(),
+                            "entry": _num(row[4]) if len(row) > 5 else None,
+                            "stop": _num(row[5]) if len(row) > 5 else None})
     if not netliq:
         return None
     return {"netliq": netliq, "positions": pos}
@@ -190,8 +207,19 @@ def gate(sig: dict, book: dict | None) -> list[tuple[str, str]]:
         if ref not in ("", None):
             ref, tg, st = float(ref), float(sig["target"]), float(sig["stop"])
             risk, reward = abs(ref - st), abs(tg - ref)
-            if risk > 0 and reward / risk < 1.5:
-                flags.append(("WARN", f"R:R {reward/risk:.1f} < 1.5"))
+            if risk > 0:
+                rr = reward / risk
+                rr = round(rr, 2)
+                if rr < RR_BLOCK:
+                    flags.append(("BLOCK", f"R:R {rr:.1f} < {RR_BLOCK:g}"))
+                elif rr < RR_WARN:
+                    flags.append(("WARN", f"R:R {rr:.1f} < {RR_WARN:g}"))
+    if sig.get("setup") and sig.get("stop") not in ("", None):
+        ref = sig.get("entry") or sig.get("spot")
+        if ref not in ("", None) and float(ref) > 0:
+            w = 100 * abs(float(ref) - float(sig["stop"])) / float(ref)
+            if w > MAX_STOP_PCT:
+                flags.append(("BLOCK", f"stop {w:.1f}% away > {MAX_STOP_PCT:g}%"))
     if not book:
         flags.append(("WARN", "book.csv not set — only grade checks applied"))
         return flags

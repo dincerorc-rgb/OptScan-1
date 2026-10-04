@@ -46,6 +46,14 @@ def fmt_alert(a: dict) -> str:
     if a.get("bayes"):
         import bayes
         lines.append(bayes.fmt(a["bayes"]))
+    pl = a.get("plan")
+    if pl:
+        lines.append(f"R plan: entry {pl['entry']:.2f} stop {pl['stop']:.2f} (1R {pl['R']:.2f} = {pl['risk_pct']:.1f}%)"
+                     f" · BE-stop @ {pl['be_at']:.2f} (+2R) · tgt {pl['t1']:.2f} (+3R, sell ⅓) · trail EMA50")
+        sz = f"   risk ${pl['risk_usd']:,.0f}/trade → shares {pl['shares']}"
+        if "contracts_risk" in pl:
+            sz += f" · options {pl['contracts_risk']}x (≈${pl['opt_loss_1x']:,.0f} lost/contract at stop)"
+        lines.append(sz)
     if t["structure"] in ("WATCH", "NONE"):
         lines.append(f"→ {t['structure']}: {t['note']}")
     else:

@@ -11,6 +11,10 @@ Outcome per signal (1 = worked, 0 = failed):
     1 if the close is in the signal's favour.
   * otherwise              -> 1 if the directional return at +5 sessions is > 0.
 Brier = mean((p - outcome)^2). A coin flip scores 0.25; lower is better.
+
+R multiple (Minervini expectancy): 1R = |entry - stop|. Stop hit = -1R (or worse if the
+open gapped through it); target hit = +reward/risk; otherwise the close at session 20.
+Expectancy = mean R per trade = win% x avg win R - loss% x avg loss R. This is the headline.
 """
 from __future__ import annotations
 
@@ -26,7 +30,7 @@ import calib  # noqa: E402
 SCORED = calib.STATE / "scored.csv"
 HORIZON = 20
 SFIELDS = ["key", "date", "source", "ticker", "direction", "grade", "setup", "p",
-           "ref", "r5", "r20", "invalidated", "outcome", "status", "sessions"]
+           "ref", "r5", "r20", "invalidated", "outcome", "status", "sessions", "r_mult"]
 
 
 def fetch_yf(ticker: str, start: str):
@@ -58,7 +62,7 @@ def score_one(sig: dict, bars: list) -> dict:
     out = {"key": "|".join([sig["date"], sig["source"], sig["ticker"], d]),
            **{k: sig.get(k, "") for k in ("date", "source", "ticker", "direction", "grade", "setup", "p")},
            "ref": round(ref, 2) if ref else ref, "r5": "", "r20": "", "invalidated": "", "outcome": "",
-           "status": "open", "sessions": len(after)}
+           "status": "open", "sessions": len(after), "r_mult": ""}
     if ref is None or not after:
         return out
     if len(after) >= 5:
@@ -70,16 +74,19 @@ def score_one(sig: dict, bars: list) -> dict:
         crossed = any((b[3] <= inv) if d == "CALL" else (b[2] >= inv) for b in after)
         out["invalidated"] = int(crossed)
     tgt, stp = _f(sig.get("target")), _f(sig.get("stop"))
-    if tgt is not None and stp is not None:
+    risk = abs(ref - stp) if stp is not None else 0
+    R = (lambda px: round(sgn * (px - ref) / risk, 2)) if risk > 0 else (lambda px: "")
+    if stp is not None and risk > 0:
         for b in after:
-            hit_t = b[2] >= tgt if d == "CALL" else b[3] <= tgt
+            gap_s = b[1] <= stp if d == "CALL" else b[1] >= stp
+            hit_t = tgt is not None and (b[2] >= tgt if d == "CALL" else b[3] <= tgt)
             hit_s = b[3] <= stp if d == "CALL" else b[2] >= stp
             if hit_s:
-                out.update(outcome=0, status="stop"); return out
+                out.update(outcome=0, status="stop", r_mult=R(b[1]) if gap_s else -1.0); return out
             if hit_t:
-                out.update(outcome=1, status="target"); return out
+                out.update(outcome=1, status="target", r_mult=R(tgt)); return out
         if len(after) >= HORIZON:
-            out.update(outcome=int(sgn * (after[-1][4] - ref) > 0), status="time")
+            out.update(outcome=int(sgn * (after[-1][4] - ref) > 0), status="time", r_mult=R(after[-1][4]))
         return out
     if len(after) >= 5:
         out.update(outcome=int(out["r5"] > 0), status="r5")
@@ -120,6 +127,26 @@ def _stats(rows):
             "r5": sum(r5) / len(r5) if r5 else None}
 
 
+def _exp(rows):
+    rs = [float(r["r_mult"]) for r in rows if r.get("r_mult") not in ("", None)]
+    if not rs:
+        return {"n": 0}
+    w = [x for x in rs if x > 0]
+    l = [x for x in rs if x <= 0]
+    aw = sum(w) / len(w) if w else 0.0
+    al = -sum(l) / len(l) if l else 0.0
+    return {"n": len(rs), "win": len(w) / len(rs), "aw": aw, "al": al,
+            "payoff": aw / al if al else float("inf"), "E": sum(rs) / len(rs), "tot": sum(rs)}
+
+
+def _fmt_e(label, e):
+    if not e["n"]:
+        return f"{label:<16} n=0"
+    po = "∞" if e["payoff"] == float("inf") else f"{e['payoff']:.1f}"
+    return (f"{label:<16} n={e['n']:<3} win {e['win']:.0%} · +{e['aw']:.1f}R/−{e['al']:.1f}R"
+            f" · payoff {po} · E {e['E']:+.2f}R · Σ {e['tot']:+.1f}R")
+
+
 def _fmt(label, s):
     if not s["n"]:
         return f"{label:<9} n=0"
@@ -131,6 +158,25 @@ def review(rows: list[dict]) -> str:
     today = dt.date.today()
     wk = (today - dt.timedelta(days=7)).isoformat()
     L = [f"📊 Calibration review — {today.isoformat()}"]
+    # --- headline: expectancy (Minervini) ---
+    L.append("\nEXPECTANCY (R per trade) — the number that pays:")
+    tot_e = _exp(rows)
+    L.append(" " + _fmt_e("ALL", tot_e))
+    strat = defaultdict(list)
+    for r in rows:
+        su = r.get("setup") or ""
+        strat[su.split("/")[1] if "/" in su else (su or r["source"])].append(r)
+    for k in sorted(strat):
+        if _exp(strat[k])["n"]:
+            L.append(" " + _fmt_e(k[:16], _exp(strat[k])))
+    for k in sorted({r.get("setup") for r in rows if "/" in (r.get("setup") or "")}):
+        e = _exp([r for r in rows if r.get("setup") == k])
+        if e["n"]:
+            L.append("   " + _fmt_e(k[:16], e))
+    if tot_e["n"]:
+        be = 1 / (1 + tot_e["payoff"]) if tot_e["payoff"] not in (0, float("inf")) else 0
+        L.append(f" break-even win rate at this payoff: {be:.0%} (you have {tot_e['win']:.0%})")
+        L.append(f" → set config bayes.avg_win_r: {tot_e['aw']:.1f}  avg_loss_r: {max(tot_e['al'], 1):.1f} once n ≥ 30")
     week = [r for r in rows if r["date"] >= wk]
     L.append(f"\nThis week: {len(week)} signals")
     for r in sorted(week, key=lambda r: (r["grade"], r["ticker"])):
@@ -176,6 +222,10 @@ def review(rows: list[dict]) -> str:
     inv = [r for r in rows if str(r["invalidated"]) == "1" and str(r["outcome"]) == "1"]
     if inv:
         notes.append(f"{len(inv)} winner(s) crossed invalidation first — stops may be too tight.")
+    if tot_e["n"] >= 20 and tot_e["E"] <= 0:
+        notes.append(f"Expectancy {tot_e['E']:+.2f}R ≤ 0 — system loses money regardless of hit rate.")
+    if tot_e["n"] >= 20 and tot_e["al"] > 1.2:
+        notes.append(f"Avg loss {tot_e['al']:.1f}R > 1.2R — stops gapping/not honoured; tighten or avoid earnings.")
     if tot["n"] < 20:
         notes.append(f"Only {tot['n']} resolved — too early to judge (need ~30+/grade).")
     L.append("\nVerdict:\n " + ("\n ".join(notes) if notes else "No red flags."))

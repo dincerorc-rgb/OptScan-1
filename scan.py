@@ -57,6 +57,8 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
     rec["tt_exempt"] = t in (mcfg.get("tt_exempt") or []) or not mcfg.get("tt_enabled", True)
     rec["trade"] = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon).as_dict()
 
+    rec["plan"] = r_plan(rec, cfg)
+
     # Bayes layer: backtest prior x evidence LRs -> posterior + fair P(breakeven) vs market
     try:
         rec["tape_up"] = _tape_up(cfg)
@@ -65,6 +67,34 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
     except Exception as e:
         log.warning("%s bayes failed: %s", t, e)
     return rec
+
+
+def r_plan(rec: dict, cfg: dict) -> dict | None:
+    """Minervini R plan for long setups: risk = pivot - stop = 1R.
+    Size from the stop (lose risk_pct of the account if the stop hits), not from premium."""
+    piv, stp = rec.get("pivot"), rec.get("stop")
+    if rec.get("bias") != "LONG" or not (piv == piv and stp == stp) or not piv or piv <= stp:
+        return None
+    rk = cfg.get("risk") or {}
+    acct = cfg["account"]["net_liq"]
+    risk_usd = acct * rk.get("risk_pct", 1.0) / 100
+    R = piv - stp
+    plan = {"entry": round(piv, 2), "stop": round(stp, 2), "R": round(R, 2), "risk_pct": round(100 * R / piv, 1),
+            "be_at": round(piv + rk.get("breakeven_at_r", 2) * R, 2),
+            "t1": round(piv + rk.get("scale_at_r", 3) * R, 2), "risk_usd": round(risk_usd, 0),
+            "shares": int(risk_usd // R)}
+    t = rec.get("trade") or {}
+    if t.get("structure") not in (None, "WATCH", "NONE") and t.get("delta"):
+        # option loss if the stock falls to the stop ~ delta x R per share (ignores theta/vega)
+        per = abs(t["delta"]) * R * 100
+        if "SPREAD" in t["structure"]:
+            per = min(per, t["debit"] * 100)
+        n_risk = int(risk_usd // per) if per > 0 else 0
+        plan["opt_loss_1x"] = round(per, 0)
+        plan["contracts_risk"] = n_risk
+        t["contracts"] = min(t.get("contracts", 0), n_risk)
+        t["premium_usd"] = round(t["contracts"] * t["debit"] * 100, 0)
+    return plan
 
 
 _TAPE: dict = {}
@@ -87,7 +117,21 @@ def check_position(p: dict, cfg: dict) -> dict | None:
     d = signals.enrich(bars, cfg["momentum"]).dropna().iloc[-1]
     c, side = float(d.close), p["side"]
     act, why = None, ""
-    if side == "LONG":
+    e, st = p.get("entry"), p.get("stop")
+    if e and st and e != st:
+        sg = 1 if side == "LONG" else -1
+        r = sg * (c - e) / abs(e - st)
+        rk = cfg.get("risk") or {}
+        if sg * (c - st) <= 0:
+            return {"ticker": p["ticker"], "label": p.get("label", ""), "side": side, "action": "EXIT",
+                    "close": round(c, 2), "rsi": round(float(d.rsi), 0), "why": f"STOP {st:g} hit ({r:+.1f}R) — no hesitation"}
+        if r >= rk.get("scale_at_r", 3):
+            act, why = "TRIM", f"{r:+.1f}R — sell ⅓, trail rest on EMA50 {d.ema_s:.2f}"
+        elif r >= rk.get("breakeven_at_r", 2) and sg * (st - e) < 0:
+            act, why = "MOVE STOP", f"{r:+.1f}R — raise stop to breakeven {e:g}"
+    if act:
+        pass
+    elif side == "LONG":
         if c < d.ema_s:
             act, why = "EXIT", f"close < EMA50 {d.ema_s:.2f}"
         elif c < d.ema_f and d.rsi < 45:
@@ -126,7 +170,8 @@ def book_positions(cfg: dict) -> list[dict]:
         if k in merged:
             merged[k]["label"] += " + " + p["label"]
         else:
-            merged[k] = {"ticker": p["ticker"], "side": side, "label": p["label"]}
+            merged[k] = {"ticker": p["ticker"], "side": side, "label": p["label"],
+                         "entry": p.get("entry"), "stop": p.get("stop")}
     return list(merged.values())
 
 
@@ -156,6 +201,9 @@ def run(cfg: dict, tickers: list[str] | None = None, send: bool = True, min_scor
     bmin = (cfg.get("bayes") or {}).get("alert_min_post", 0) or 0
     if bmin:
         alert = [h for h in alert if h.get("bayes", {}).get("post", 1) >= bmin]
+    rmin = (cfg.get("bayes") or {}).get("alert_min_exp_r")
+    if rmin is not None:
+        alert = [h for h in alert if h.get("bayes", {}).get("exp_r", rmin) >= rmin]
     emin = (cfg.get("bayes") or {}).get("alert_min_usable_pp")
     if emin is not None:
         alert = [h for h in alert if h.get("bayes", {}).get("usable_pp", emin) >= emin]

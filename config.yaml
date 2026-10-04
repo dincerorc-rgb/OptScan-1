@@ -66,6 +66,12 @@ insider:
   window_days: 5
   cluster_score_min: 3.0
 
+risk:                    # Minervini: expectancy, not win rate. 1R = entry − stop
+  risk_pct: 1.0          # lose 1% of the account if the stop hits (sets shares / contracts)
+  breakeven_at_r: 2      # at +2R move the stop to entry — a 2R winner never becomes a loser
+  scale_at_r: 3          # at +3R sell ⅓, trail the rest on EMA50
+  # stops: max 8% under entry (signals.tt_max_stop_pct); gate BLOCKs R:R < 2, WARNs < 3
+
 bayes:                   # see bayes.py — prior = backtest win10, x evidence LRs
   prior_shrink_k: 20     # pseudo-trades at 50% mixed into the backtest prior
   damp: 0.75             # signals overlap -> use 75% of combined log-LR
@@ -73,6 +79,9 @@ bayes:                   # see bayes.py — prior = backtest win10, x evidence L
   drift_days: 10         # edge applied to option P(BE) over 10 sessions only
   alert_min_post: 0      # e.g. 0.55 = drop BUY alerts with posterior < 55% (0 = off)
   margin_pp: 3           # safety margin on option edge (pp) — usable = edge − spread/commission − margin
+  avg_win_r: 2.0         # E[R] = post x avg_win_r − (1−post) x avg_loss_r. Update from the Sunday review's measured numbers
+  avg_loss_r: 1.0
+  # alert_min_exp_r: 0.5   # uncomment once avg_win_r is measured: drop alerts with E[R] < +0.5R
   # alert_min_usable_pp: 0   # uncomment to drop BUY alerts whose usable option edge is below this
   learn_min_resolved: 30 # Sunday job learns LRs from outcomes after this many
   lr:                    # starting multipliers (overridden by state/bayes_lr.json once learned)

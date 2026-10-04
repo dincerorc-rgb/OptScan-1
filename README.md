@@ -42,6 +42,16 @@ Alerts only when usable edge > 0, sized at 0.2×Kelly on the cost-adjusted proba
 ## One book — `book.csv` (Oct 2026)
 `book.csv` is the only place positions live: `netliq` sets option sizing, every row is checked for SELL/TRIM, and the risk gate uses the same rows. `config.yaml positions:` is retired. Columns: `ticker,bias,premium_usd,label` (ticker = underlying to watch, label = what you hold).
 
+## Minervini expectancy layer (Oct 2026)
+Win rate isn't the goal — **expectancy (avg R per trade)** is. 1R = entry − stop.
+- **Every long alert** carries an R plan: entry (pivot), stop (≤8%), BE-stop at +2R, target +3R (sell ⅓), trail EMA50.
+- **Sizing from the stop**: `risk.risk_pct` (1%) of net liq lost if the stop hits → shares and option contracts (option loss ≈ Δ × R × 100). Option size = min(premium cap, risk cap).
+- **Bayes** adds `E[R] = post × avg_win_r − (1−post) × avg_loss_r`.
+- **Gate**: R:R < 2 → ⛔, < 3 → ⚠️; stop > 8% away → ⛔.
+- **Sunday review headline** = expectancy: win %, avg win R / avg loss R, payoff, E per trade, ΣR — split SEPA vs QM and by setup; break-even win rate shown.
+- **Positions in R**: add `entry,stop` (stock prices) to a `book.csv` row → stop hit = EXIT, +2R = MOVE STOP to breakeven, +3R = sell ⅓.
+- Alerts are tagged `/SEPA` (Trend Template 8/8) or `/QM` (momentum breakout without TT) in the signal log.
+
 ## Build list (agreed Oct 2026, not built yet)
 1. **SEPA / QM split** — tag alerts `[SEPA]` / `[QM]`, separate exits + stats.
 2. **Tradier paper bot** — SEPA via options (needs secret `TRADIER_SANDBOX_TOKEN`).
