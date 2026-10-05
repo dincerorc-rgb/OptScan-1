@@ -54,7 +54,7 @@ _VERDICT = re.compile(r"\b(CALL|PUT|NONE)\b\s*[:\-–(]?\s*(?:grade\s*)?\(?([ABC
 _STOPWORDS = {"CALL", "PUT", "NONE", "GEX", "OI", "PC", "IV", "ATM", "OTM", "ITM", "DTE",
               "ET", "UTC", "AEST", "TP", "SL", "BUY", "SELL", "MAP", "MAX", "PAIN", "FLIP",
               "WALL", "A", "B", "C", "D", "S", "US", "USD", "NEW", "IVR", "RSI", "EMA",
-              "ATR", "BE", "R", "OK", "WARN", "BLOCK", "GRADE", "TOP", "LOW", "HIGH", "PCR", "BT", "ADX", "RV", "CW", "PW", "MP", "P", "SPOT", "UTC", "OPTIONS", "WATCH", "LONG", "SHORT", "BULL", "BEAR", "NET", "VOL", "AND", "SEPA", "VCP", "TT", "RS", "SPY", "QM", "STOP", "MOVE", "EXIT", "TRIM", "TGT", "E"} | set(SETUPS)
+              "ATR", "BE", "R", "OK", "WARN", "BLOCK", "GRADE", "TOP", "LOW", "HIGH", "PCR", "BT", "ADX", "RV", "CW", "PW", "MP", "P", "SPOT", "UTC", "OPTIONS", "WATCH", "LONG", "SHORT", "BULL", "BEAR", "NET", "VOL", "AND", "SEPA", "VCP", "TT", "RS", "QM", "STOP", "MOVE", "EXIT", "TRIM", "TGT", "E"} | set(SETUPS)
 
 
 def _today() -> str:
@@ -124,7 +124,7 @@ def parse_signals(text: str, source: str) -> list[dict]:
         spot = nums.get("spot", blk["spot"])
         g = grade or ("S" if setup else "C")
         if setup and setup != "BEARDOWN":
-            setup += "/SEPA" if re.search(r"SEPA ✅|VCP/SEPA", body) else "/QM"
+            setup += "/SEPA" if re.search(r"SEPA ✅|VCP/SEPA|\bTT 8/8\b", body) else "/QM"
         bm = _BAYES.search(body)          # scanner posterior beats the grade-assumed p
         out.append({
             "ts_utc": dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"),

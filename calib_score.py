@@ -74,6 +74,14 @@ def score_one(sig: dict, bars: list) -> dict:
         crossed = any((b[3] <= inv) if d == "CALL" else (b[2] >= inv) for b in after)
         out["invalidated"] = int(crossed)
     tgt, stp = _f(sig.get("target")), _f(sig.get("stop"))
+    # buy-stop entries (entry beyond spot, e.g. PULLBACK pivot): only a trade once price trades through entry
+    spot = _f(sig.get("spot"))
+    if spot and _f(sig.get("entry")) and sgn * (ref - spot) > 0.001 * spot:
+        trig = next((i for i, b in enumerate(after) if (b[2] >= ref if d == "CALL" else b[3] <= ref)), None)
+        if trig is None:
+            out["status"] = "untriggered" if len(after) < HORIZON else "never"
+            return out
+        after = after[trig:]
     risk = abs(ref - stp) if stp is not None else 0
     R = (lambda px: round(sgn * (px - ref) / risk, 2)) if risk > 0 else (lambda px: "")
     if stp is not None and risk > 0:
@@ -181,7 +189,7 @@ def review(rows: list[dict]) -> str:
     L.append(f"\nThis week: {len(week)} signals")
     for r in sorted(week, key=lambda r: (r["grade"], r["ticker"])):
         res = {"target": "✅ tgt", "stop": "❌ stop", "time": "⏱ time", "r5": "r5",
-               "open": "… open"}[r["status"]]
+               "open": "… open", "untriggered": "… waiting entry", "never": "– never triggered"}[r["status"]]
         oc = "" if r["outcome"] == "" else (" ✅" if int(r["outcome"]) else " ❌")
         r5 = f" {float(r['r5']):+.1f}%" if r["r5"] != "" else ""
         inv = " ⚠inv" if str(r["invalidated"]) == "1" else ""
