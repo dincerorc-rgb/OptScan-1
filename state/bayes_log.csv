@@ -1,6 +1,0 @@
-date,ticker,setup,bias,spot,prior,lr,post,feats,p_be_mdl,p_be_mkt,edge_pp,usable_pp
-2026-10-05,AAPL,PULLBACK,LONG,333.6,0.557,1.41,0.639,tt_full;rs_with;tape_with,0.437,0.362,7.5,4.3
-2026-10-05,SPY,PULLBACK,LONG,773.16,0.596,1.03,0.604,pcr_against;tape_with,0.42,0.378,4.2,1.2
-2026-10-06,AAPL,PULLBACK,LONG,333.39,0.557,1.41,0.639,tt_full;rs_with;tape_with,0.422,0.362,5.9,2.8
-2026-10-06,MU,COIL,LONG,1063.69,0.524,1.41,0.608,tt_full;rs_with;tape_with,0.417,0.372,4.5,1.1
-2026-10-06,SPY,PULLBACK,LONG,781.35,0.596,1.03,0.604,pcr_against;tape_with,0.416,0.374,4.3,1.2

@@ -1,7 +1,0 @@
-{
-  "expires": "2026-10-09",
-  "tickers": {
-    "CRWD": {"pivot": 268.95, "stop_ref": 261.58},
-    "MRVL": {"pivot": 267.50, "stop_ref": 256.24}
-  }
-}
