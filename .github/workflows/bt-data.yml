@@ -1,0 +1,32 @@
+name: bt-data
+on:
+  push:
+    branches: [bt-data]
+    paths: ['.github/workflows/bt-data.yml','tickers.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install yfinance pandas
+      - name: download daily history
+        run: |
+          mkdir -p data
+          python - <<'PY'
+          import yfinance as yf, pandas as pd
+          for t in open('tickers.txt').read().split():
+              df = yf.Ticker(t).history(period='max', interval='1d', auto_adjust=True, actions=False)
+              df.index = df.index.tz_localize(None).date
+              df.index.name='Date'
+              df[['Open','High','Low','Close','Volume']].round(4).to_csv(f'data/{t}.csv')
+              print(t, len(df), df.index[0], df.index[-1])
+          PY
+      - name: commit
+        run: |
+          git config user.name "optscan-bot"; git config user.email "actions@github.com"
+          git add data && git commit -m "bt-data: daily OHLCV [skip ci]" && git push || echo "no change"

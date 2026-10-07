@@ -1,0 +1,47 @@
+# pm_bot markets — edit in the browser. Find slugs with: Actions → pm-bot → Run → cmd "discover bitcoin"
+# (Polymarket slug = the last part of the market URL; Kalshi ticker = the market ticker on its page.)
+#
+# Per market:
+#   polymarket: <slug>   OR   kalshi: <TICKER>
+#   prior: market | threshold | 0.42        market = start from the market mid (edge comes only from your signals)
+#                                            threshold = price-level market, priced from spot/vol (below)
+#                                            number = your own starting probability
+#   signals: list of {name, lr}               lr > 1 pushes toward YES, < 1 toward NO. Set active: false to mute one.
+#   stake_usd / safety_margin / slippage      optional per-market overrides
+#   position: {yes: 260, no: 235, avg_yes: 0.48, avg_no: 0.49}   what you hold (up/down/avg_up/avg_down also work)
+#       -> matched pairs (always pay $1) vs directional exposure; alerts become add / hold / flip vs Kelly target
+#       Keep it current after fills. A market can stay enabled: false and still show in the positions report.
+#
+# usable edge = fair − average entry (walked through the book for stake_usd) − costs − safety_margin
+# Alert fires only when usable edge > 0, re-alerts when it moves ≥ realert_pp, and says "edge gone" when it closes.
+
+defaults:
+  bankroll_usd: 2000      # prediction-market bankroll (for Kelly sizing)
+  kelly_frac: 0.20       # 0.2 x Kelly, fed the cost-adjusted probability
+  stake_usd: 100          # size used to compute average entry through the order book
+  safety_margin: 0.02     # 2¢ cushion for model error
+  slippage: 0.0           # extra ¢ per contract if you trade with market orders
+  realert_pp: 0.02
+  lr_cap: 4.0
+  platforms:
+    polymarket: {fee_coef: 0.0}    # set e.g. 0.02 if the market charges taker fees
+    kalshi:     {fee_coef: 0.07}   # Kalshi taker fee ≈ 0.07 × p × (1 − p) per contract
+
+markets:
+  # --- example 1: price-level market priced from the underlying (replace slug, then enabled: true)
+  - name: BTC above 120k by Dec 31
+    enabled: false
+    polymarket: will-bitcoin-be-above-120000-on-december-31
+    prior: threshold
+    threshold: {symbol: BTC-USD, strike: 120000, direction: above, vol: rv}   # vol: iv | rv | 0.55
+    signals:
+      - {name: ETF inflows 3wk, lr: 1.15}
+
+  # --- example 2: your own view on an event (the 0.42 × 1.62 → 54% case)
+  - name: Example event
+    enabled: false
+    kalshi: EXAMPLE-TICKER
+    prior: 0.42
+    signals:
+      - {name: my signal, lr: 1.62}
+    position: {yes: 260, no: 235, avg_yes: 0.48, avg_no: 0.49}   # -> 235 matched, +25 YES

@@ -1,0 +1,25 @@
+name: calib-review
+
+on:
+  schedule:
+    - cron: "37 21 * * 1-5"
+    - cron: "7 8 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  calib:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q yfinance pandas pyyaml
+      - env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ "${{ github.event.schedule }}" = "37 21 * * 1-5" ]; then python calib_score.py score; else python calib_score.py review; python bayes.py calibrate; fi

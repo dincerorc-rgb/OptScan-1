@@ -1,0 +1,41 @@
+name: optscan
+on:
+  schedule:
+    - cron: "30 15 * * 1-5"
+    - cron: "15 20 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      cmd:
+        description: "scan | test-telegram | backtest NVDA"
+        default: "scan"
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: mkdir -p state
+      - run: pip install -r requirements.txt
+      - run: python calib_run.py run.py ${{ github.event.inputs.cmd || 'scan' }} 2>&1 | tee run_out.txt
+        shell: bash
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SEC_USER_AGENT: "Dincer optscan dincerorc@gmail.com"
+      - name: persist IV history
+        run: |
+          git config user.name optscan && git config user.email optscan@users.noreply.github.com
+          git add state/iv_history.csv state/bayes_log.csv 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "iv history + bayes log $(date -u +%F)" && (git pull --rebase -X theirs || true) && git push)
+      - name: push dry-run output to debug branch
+        if: github.event_name == 'workflow_dispatch' && contains(github.event.inputs.cmd, '--dry')
+        run: |
+          mkdir -p /tmp/dbg && cp run_out.txt /tmp/dbg/dry_out.txt && cp state/scan_*.json /tmp/dbg/ 2>/dev/null || true
+          git checkout -q --orphan debug-out
+          git rm -rqf . && git clean -fdxq
+          cp /tmp/dbg/* .
+          git add -A && git commit -qm "dry run $(date -u +%FT%TZ) [skip ci]"
+          git push -qf origin HEAD:debug
