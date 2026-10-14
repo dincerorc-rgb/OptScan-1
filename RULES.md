@@ -29,6 +29,8 @@
 ## Candidate changes (parked until the review)
 - VCP specifics (contraction count / depth) — awaiting material
 - Market-direction filter (when to go to cash) — awaiting material
+- Nash `gate` mode (fail one step = off the island) — decide at review with ≥30 graded trades
 
 ## Changelog
+- v1.1 · 15 Oct 2026 · Tom Nash quality layer (`nash.py`, `config.yaml → nash:`), added at Dincer's request. SEPA entry/stop/exit rules unchanged; the layer changes only **which option contract** (expiry, delta, spread vs outright, size) and ±1★. Mode `tilt`; `gate` (block C/X calls) parked until the 4 Jan review compares graded vs ungraded expectancy.
 - v1 · 4 Oct 2026 · SEPA + R plan + O'Neil pyramid / 8-week hold / climax sell; Bayes = tiebreaker only.

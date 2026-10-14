@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-import backtest, bayes, data, insider, notify, options, signals
+import backtest, bayes, data, insider, nash, notify, options, signals
 
 log = logging.getLogger(__name__)
 STATE = Path(__file__).resolve().parent / "state"
@@ -53,9 +53,30 @@ def scan_ticker(t: str, cfg: dict) -> dict | None:
         horizon = "leaps"
     else:
         horizon = "swing"
+    # Nash quality layer: fundamentals grade -> expiry / delta / structure / size
+    nz = {"horizon": horizon, "force_spread": False, "delta": None, "size_mult": 1.0, "score_adj": 0, "block": None, "why": ""}
+    if (cfg.get("nash") or {}).get("mode", "tilt") != "off":
+        try:
+            rec["nash"] = nash.grade(t, cfg)
+            nz = nash.apply(rec, rec["nash"], horizon, ocfg, cfg)
+        except Exception as e:
+            log.warning("%s nash failed: %s", t, e)
+    horizon = nz["horizon"]
     rec["horizon"] = horizon
     rec["tt_exempt"] = t in (mcfg.get("tt_exempt") or []) or not mcfg.get("tt_enabled", True)
-    rec["trade"] = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon).as_dict()
+    tr = options.suggest(t, st.bias, st.setup, spot, rec["iv_rank"], oa["chain"], ocfg, acct, horizon,
+                         force_spread=nz["force_spread"], delta=nz["delta"])
+    if nz["block"]:
+        tr = options.Trade("WATCH", "", 0, "", 0, 0, 0, float("nan"), 0, 0, nz["block"])
+    elif tr.structure not in ("WATCH", "NONE") and nz["size_mult"] < 1:
+        tr.contracts = int(tr.contracts * nz["size_mult"])
+        tr.premium_usd = round(tr.contracts * tr.debit * 100, 0)
+    if nz["why"]:
+        tr.note += " | " + nz["why"]
+        rec["reason"] += "; " + nz["why"]
+    if nz["score_adj"]:
+        rec["score"] = max(min(rec["score"] + nz["score_adj"], 5), 0)
+    rec["trade"] = tr.as_dict()
 
     if st.bias == "LONG":
         d_ = signals.enrich(bars, mcfg).dropna().iloc[-1]

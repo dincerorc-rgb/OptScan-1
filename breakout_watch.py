@@ -4,6 +4,7 @@ Polls 1-min bars every POLL_SEC during the US regular session and fires:
   ✅ BREAKOUT      price > pivot AND volume pace >= VOL_PACE_MIN
   ⚠️ LOW-VOL BREAK price > pivot but pace below threshold (upgrades to ✅ if volume arrives)
   ❌ FAILED        after a break alert, price back below pivot by > FAIL_PCT
+Run with --once from a 15/30-min cron (cheap on Actions minutes); without it, loops all session.
 Each alert fires once per ticker per day (state kept in state/bw_state.json).
 
 Config: watchlist.json  {"expires":"YYYY-MM-DD","tickers":{"CRWD":{"pivot":268.95},...}}
@@ -123,9 +124,12 @@ def main():
     open_t = now.replace(hour=9, minute=30, second=0, microsecond=0)
     close_t = now.replace(hour=16, minute=0, second=0, microsecond=0)
     stop_t = min(close_t, now + timedelta(minutes=MAX_RUN_MIN))
+    once = "--once" in sys.argv   # one pass and exit: cron polls, no paid minutes spent sleeping
     if now >= close_t:
         print("session over"); return
     if now < open_t:
+        if once:
+            print("pre-market — nothing to do"); return
         time.sleep((open_t - now).total_seconds())
 
     st = load_state(now.date().isoformat())
@@ -150,6 +154,8 @@ def main():
             except Exception as e:
                 print(t, "error", e, flush=True)
         save_state(st)
+        if once:
+            break
         time.sleep(POLL_SEC)
     print("loop end", datetime.now(ET))
 

@@ -2,8 +2,9 @@ name: breakout-watch
 
 on:
   schedule:
-    - cron: "10 13 * * 1-5"   # starts before the 9:30 ET open (EDT and EST), sleeps until the bell
-    - cron: "0 19 * * 1-5"    # second leg — queues behind the first, covers the last part of the session
+    # one pass every 30 min, 13:00–20:59 UTC (covers 9:30–16:00 ET in EDT and EST); script exits fast outside the session.
+    # Was: one job sleeping all session (~8,500 Actions min/month -> blew the free 2,000 on a private repo).
+    - cron: "5,35 13-20 * * 1-5"
   workflow_dispatch:
     inputs:
       test:
@@ -18,7 +19,7 @@ concurrency:
 jobs:
   watch:
     runs-on: ubuntu-latest
-    timeout-minutes: 358
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -35,7 +36,7 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python breakout_watch.py ${{ inputs.test && '--test' || '' }}
+        run: python breakout_watch.py --once ${{ inputs.test && '--test' || '' }}
       - name: Save alert state
         if: always()
         uses: actions/cache/save@v4

@@ -5,6 +5,7 @@
   python run.py scan NVDA PLTR --dry # print only
   python run.py backtest NVDA        # setup stats on one name
   python run.py chain PLTR           # IV / structure suggestion only
+  python run.py nash [TICKERS] [--dry] [--refresh]   # Nash quality board -> Telegram
   python run.py test-telegram
 """
 import argparse
@@ -31,6 +32,8 @@ s = sub.add_parser("scan"); s.add_argument("tickers", nargs="*"); s.add_argument
 s.add_argument("--min-score", type=int, default=2)
 b = sub.add_parser("backtest"); b.add_argument("tickers", nargs="+")
 c = sub.add_parser("chain"); c.add_argument("ticker"); c.add_argument("--bias", default="LONG")
+n = sub.add_parser("nash"); n.add_argument("tickers", nargs="*"); n.add_argument("--dry", action="store_true")
+n.add_argument("--refresh", action="store_true")
 sub.add_parser("test-telegram")
 a = ap.parse_args()
 
@@ -48,5 +51,9 @@ elif a.cmd == "chain":
     print({k: v for k, v in oa.items() if k != "chain"})
     print(options.suggest(a.ticker, a.bias, "BREAKOUT", spot, oa["iv_rank"], oa["chain"],
                           cfg["options"], cfg["account"]).as_dict())
+elif a.cmd == "nash":
+    import nash
+    msg = nash.board(a.tickers or cfg["watchlist"], cfg, refresh=a.refresh)
+    print(msg) if a.dry else notify.send(msg)
 elif a.cmd == "test-telegram":
     print("sent" if notify.send("optscan online ✅") else "not sent - check .env")

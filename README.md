@@ -60,6 +60,28 @@ Win rate isn't the goal — **expectancy (avg R per trade)** is. 1R = entry − 
 - **Options**: SEPA expiries moved to 75–150 DTE so an 8-week hold doesn't run into theta decay.
 - Needs `entry,stop,entry_date` on `book.csv` rows to manage open positions.
 
+## Tom Nash quality layer (Oct 2026) — `nash.py`, `config.yaml → nash:`
+Fundamentals (yfinance, cached weekly in `state/nash_cache.json`) → Nash's 12-step screen → grade → contract choice.
+- **Scorecard** (Step 6): 7 data categories scored 0/5/10 (cash vs debt, revenue growth, op margin, short interest, institutional ownership, revenue > expense growth, 5y vs SPY) + 6 subjective ones from `nash.subjective` (moat, CEO, pricing power, trend, culture, talent). Unscored subjective = 5 and the score shows `~`.
+- **Instant kills** (Step 3): mcap < $1B, SI > 10%, debt > cash, op margin < 20%, revenue < 10% and falling, ≥ 2 EPS misses in 4Q, < 10 years old (`nash.founded`).
+- **Flags**: FCF/net cash negative in last 4Q, Rule of 40 < 40, expenses outgrowing revenue, sanity < 2/3, loan-officer ratios (interest cover < 4x, assets/liabilities ex-goodwill < 2, current ratio < 1, D/E ≥ 4), bear DCF < price, PEG > 2.
+- **DCF** (Step 12): 3y averages, growth × 0.8 (cap 30%), 5y FCF, discount 8/10/12%, terminal 4%, + cash − debt ÷ shares → bear/base/bull per share.
+
+| Grade | Rule | Calls | Puts |
+|---|---|---|---|
+| **A** | ≥100, no kills | Pullback/coil/breakout → **LEAPS** (unless IV rich), Δ 0.70–0.80 stock replacement; spread if base DCF < price or PEG > 2 | spread, swing, −1★ |
+| **B** | 75–99, no kills | scanner default | spread, swing, −1★ |
+| **C** | < 75 or 1 kill | no LEAPS, spread only, ½ size | default |
+| **X** | ≥ 2 kills | spread only, ¼ size, −1★ (`mode: gate` blocks) | +1★ |
+| ETF | — | default | default |
+
+Bayes gets `nash_with` (×1.10) / `nash_against` (×0.90); the Sunday job learns their real values from outcomes.
+**Board:** Actions → optscan → Run workflow → cmd `nash` (or `nash --dry`) → every watchlist name graded on Telegram.
+Score the subjective categories in `config.yaml → nash.subjective` — harshly, per Nash.
+
+## Actions minutes (Oct 2026)
+The repo is private, so the free plan's 2,000 min/month applies. breakout-watch used to sleep all session (~8,500 min/month) and blocked every workflow from 8 Oct. It now runs one pass every 30 min (`--once`), so the whole repo uses ~800 min/month.
+
 ## Rulebook
 See **RULES.md**: v1 frozen 4 Oct 2026; changes only at quarterly reviews with data.
 

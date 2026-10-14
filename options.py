@@ -129,7 +129,8 @@ def _size(debit: float, acct: dict) -> tuple[int, float]:
 
 
 def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
-            chain: pd.DataFrame, ocfg: dict, acct: dict, horizon: str = "swing") -> Trade:
+            chain: pd.DataFrame, ocfg: dict, acct: dict, horizon: str = "swing",
+            force_spread: bool = False, delta: list | None = None) -> Trade:
     if bias == "FLAT" or setup in ("NONE", "EXTENDED") or chain.empty:
         return Trade("WATCH", "", 0, "", 0, 0, 0, float("nan"), 0, 0, "no entry / manage existing")
 
@@ -139,6 +140,8 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
     else:
         dte_lo, dte_hi = ocfg["leaps_dte"] if horizon == "leaps" else ocfg["swing_dte"]
         d_lo, d_hi = ocfg["long_call_delta"]
+    if delta:  # Nash A LEAPS: stock-replacement delta
+        d_lo, d_hi = delta
     side = "call" if bias == "LONG" else "put"
     long_leg = _pick(chain, side, spot, dte_lo, dte_hi, d_lo, d_hi, ocfg)
     if long_leg is None:
@@ -149,7 +152,7 @@ def suggest(ticker: str, bias: str, setup: str, spot: float, ivr: float,
     cheap = np.isfinite(ivr) and ivr <= ocfg["iv_cheap_rank"]
 
     # Outright long premium only when IV is not rich; otherwise debit spread.
-    if not rich and (cheap or setup == "BREAKOUT" or horizon == "sepa"):
+    if not force_spread and not rich and (cheap or setup == "BREAKOUT" or horizon == "sepa"):
         structure = "LONG_CALL" if side == "call" else "LONG_PUT"
         debit = float(long_leg.mid)
         be = long_leg.strike + debit if side == "call" else long_leg.strike - debit

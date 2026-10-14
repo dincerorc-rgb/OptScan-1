@@ -6,13 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       cmd:
-        description: "scan | test-telegram | backtest NVDA"
+        description: "scan | nash | test-telegram | backtest NVDA"
         default: "scan"
 permissions:
   contents: write
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,7 +29,7 @@ jobs:
       - name: persist IV history
         run: |
           git config user.name optscan && git config user.email optscan@users.noreply.github.com
-          git add state/iv_history.csv state/bayes_log.csv 2>/dev/null || true
+          for f in state/iv_history.csv state/bayes_log.csv state/nash_cache.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || (git commit -m "iv history + bayes log $(date -u +%F)" && (git pull --rebase -X theirs || true) && git push)
       - name: push dry-run output to debug branch
         if: github.event_name == 'workflow_dispatch' && contains(github.event.inputs.cmd, '--dry')

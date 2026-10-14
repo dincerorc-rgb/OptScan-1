@@ -56,6 +56,8 @@ DEFAULTS = {
         "pcr_against": 0.95,   # long with P/C >= 1.5, short with P/C <= 0.5
         "tape_with": 1.10,     # SPY vs its EMA50 agrees with direction
         "tape_against": 0.85,
+        "nash_with": 1.10,     # Nash A on a long / Nash X on a put
+        "nash_against": 0.90,  # Nash X on a long / Nash A on a put
     },
 }
 
@@ -118,6 +120,12 @@ def evidence(rec: dict, cfg: dict) -> list[str]:
     if pcr is not None and isinstance(pcr, (int, float)) and math.isfinite(pcr):
         if (long and pcr >= 1.5) or (not long and pcr <= 0.5):
             f.append("pcr_against")
+    ng = (rec.get("nash") or {}).get("grade")
+    if ng in ("A", "B", "C", "X"):
+        if ng == "A":
+            f.append("nash_with" if long else "nash_against")
+        elif ng == "X":
+            f.append("nash_against" if long else "nash_with")
     tape = rec.get("tape_up")
     if tape is not None:
         f.append("tape_with" if bool(tape) == long else "tape_against")
@@ -183,7 +191,8 @@ def assess(rec: dict, cfg: dict, bt_row: dict | None = None) -> dict:
 
 SHORT = {"tt_full": "TT8", "tt_weak": "TT≤5", "rs_with": "RS+", "rs_against": "RS−",
          "vol_surge": "vol≥2x", "adx_strong": "ADX30", "rsi_hot": "RSIhot", "insider": "F4",
-         "pcr_against": "PCR−", "tape_with": "tape+", "tape_against": "tape−"}
+         "pcr_against": "PCR−", "tape_with": "tape+", "tape_against": "tape−",
+         "nash_with": "Nash+", "nash_against": "Nash−"}
 
 
 def fmt(bz: dict) -> str:

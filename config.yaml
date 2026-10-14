@@ -107,6 +107,23 @@ bayes:                   # see bayes.py — prior = backtest win10, x evidence L
     pcr_against: 0.95
     tape_with: 1.10
     tape_against: 0.85
+    nash_with: 1.10       # Nash A long / Nash X put
+    nash_against: 0.90    # Nash X long / Nash A put
+
+nash:                    # Tom Nash quality layer — nash.py. Fundamentals -> grade -> contract choice
+  mode: tilt             # off | tilt (grade changes expiry/delta/structure/size) | gate (C/X calls blocked)
+  cache_days: 7          # fundamentals refetched weekly (state/nash_cache.json)
+  grade_a: 100           # scorecard >= 100 + no kills -> A
+  grade_b: 75            # 75-99 -> B, below -> C
+  min_op_margin: 0.20    # Step 3 instant kill
+  leaps_delta_a: [0.70, 0.80]   # A-grade LEAPS = stock replacement (deep ITM, less theta/vega)
+  terminal_growth: 0.04  # Nash's DCF rule (aggressive vs bull 8% discount — 0.03 is more conservative)
+  dcf_trim: 0.8          # x 3y avg revenue growth
+  dcf_max_growth: 0.30
+  exempt: [QQQ, SPY, IWM]
+  founded: {}            # optional, e.g. {CRWV: 2017} -> "<10y old" kill
+  subjective_default: 5  # moat/ceo/pricing_power/trend/culture/talent when not scored below (shown as ~)
+  subjective: {}         # e.g. NVDA: {moat: 10, ceo: 10, pricing_power: 10, trend: 10, culture: 10, talent: 10}
 
 alerts:
   send_no_setup_summary: false   # quiet unless there is a BUY/SELL
