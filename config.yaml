@@ -123,7 +123,28 @@ nash:                    # Tom Nash quality layer — nash.py. Fundamentals -> g
   exempt: [QQQ, SPY, IWM]
   founded: {}            # optional, e.g. {CRWV: 2017} -> "<10y old" kill
   subjective_default: 5  # moat/ceo/pricing_power/trend/culture/talent when not scored below (shown as ~)
-  subjective: {}         # e.g. NVDA: {moat: 10, ceo: 10, pricing_power: 10, trend: 10, culture: 10, talent: 10}
+  subjective:            # Claude's harsh first draft, 15 Oct 2026 — EDIT to your own view (0/5/10)
+    #          moat ceo pricing_power trend culture talent
+    NVDA: {moat: 10, ceo: 10, pricing_power: 10, trend: 10, culture: 10, talent: 10}   # 60/60
+    MSFT: {moat: 10, ceo: 10, pricing_power: 10, trend: 10, culture: 10, talent: 10}   # 60/60
+    PLTR: {moat: 10, ceo: 10, pricing_power: 5, trend: 10, culture: 10, talent: 10}   # 55/60
+    GOOGL: {moat: 10, ceo: 5, pricing_power: 10, trend: 10, culture: 5, talent: 10}   # 50/60
+    AMZN: {moat: 10, ceo: 5, pricing_power: 10, trend: 10, culture: 5, talent: 10}   # 50/60
+    META: {moat: 10, ceo: 10, pricing_power: 5, trend: 10, culture: 5, talent: 10}   # 50/60
+    AAPL: {moat: 10, ceo: 5, pricing_power: 10, trend: 5, culture: 5, talent: 10}   # 45/60
+    ORCL: {moat: 10, ceo: 5, pricing_power: 10, trend: 10, culture: 5, talent: 5}   # 45/60
+    AMD: {moat: 5, ceo: 10, pricing_power: 5, trend: 10, culture: 5, talent: 10}   # 45/60
+    CRWV: {moat: 5, ceo: 5, pricing_power: 5, trend: 10, culture: 5, talent: 10}   # 40/60
+    RKLB: {moat: 5, ceo: 10, pricing_power: 5, trend: 10, culture: 5, talent: 10}   # 45/60
+    MP: {moat: 5, ceo: 10, pricing_power: 5, trend: 10, culture: 5, talent: 5}   # 40/60
+    TSLA: {moat: 5, ceo: 5, pricing_power: 0, trend: 5, culture: 5, talent: 10}   # 30/60
+    MU: {moat: 5, ceo: 5, pricing_power: 0, trend: 10, culture: 5, talent: 5}   # 30/60
+    HOOD: {moat: 5, ceo: 10, pricing_power: 0, trend: 5, culture: 5, talent: 5}   # 30/60
+    OKLO: {moat: 0, ceo: 5, pricing_power: 0, trend: 10, culture: 5, talent: 5}   # 25/60
+    IREN: {moat: 0, ceo: 5, pricing_power: 0, trend: 10, culture: 5, talent: 5}   # 25/60
+    HIMS: {moat: 0, ceo: 5, pricing_power: 0, trend: 5, culture: 5, talent: 5}   # 20/60
+    UUUU: {moat: 0, ceo: 5, pricing_power: 0, trend: 5, culture: 5, talent: 5}   # 20/60
+    USAR: {moat: 0, ceo: 0, pricing_power: 0, trend: 5, culture: 0, talent: 0}   # 5/60
 
 alerts:
   send_no_setup_summary: false   # quiet unless there is a BUY/SELL
