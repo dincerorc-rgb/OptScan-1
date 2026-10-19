@@ -11,9 +11,13 @@ permissions:
 
 jobs:
   calib:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - name: load book (from BOOK_CSV secret)
+        env:
+          BOOK_CSV: ${{ secrets.BOOK_CSV }}
+        run: if [ -n "$BOOK_CSV" ]; then printf '%s\n' "$BOOK_CSV" > book.csv; else echo "BOOK_CSV secret not set - running without book"; fi
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

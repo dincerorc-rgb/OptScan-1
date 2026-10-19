@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 .env
+
+# private: positions + net liq come from the BOOK_CSV secret at runtime
+book.csv
