@@ -46,6 +46,7 @@ jobs:
       - name: push dry-run output to debug branch
         if: github.event_name == 'workflow_dispatch' && contains(github.event.inputs.cmd, '--dry')
         run: |
+          git config user.name optscan && git config user.email optscan@users.noreply.github.com
           mkdir -p /tmp/dbg && cp run_out.txt /tmp/dbg/stockbee_out.txt && cp state/stockbee_*.json state/stockbee_*.csv /tmp/dbg/ 2>/dev/null || true
           git checkout -q --orphan debug-out
           git rm -rqf . && git clean -fdxq
