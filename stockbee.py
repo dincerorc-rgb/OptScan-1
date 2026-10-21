@@ -44,7 +44,8 @@ DEFAULTS = {
     "min_avg_vol": 300_000,          # 20d average shares — tradeability floor
     "mb_pct": 4.0,                   # 4% breakout
     "mb_min_vol": 100_000,
-    "mb_min_score": 4,               # 2LYNCH score needed to alert (of 6)
+    "mb_min_score": 5,               # 2LYNCH score needed to alert (of 6)
+    "mb_min_vx": 1.2,                # breakout volume vs 50d avg
     "mb_max_alerts": 10,
     "c_tight_pct": 15.0,             # prior 10-bar high-low range / close
     "y_max_prior_bursts": 2,         # 4% bursts in prior 40 bars
@@ -216,6 +217,11 @@ def tag(t: str) -> dict:
         info = tk.info or {}
         out["name"] = (info.get("shortName") or t)[:28]
         out["mcap"] = info.get("marketCap")
+        if not out["mcap"]:
+            try:
+                out["mcap"] = float(tk.fast_info["market_cap"]) or None
+            except Exception:
+                pass
         out["eps"] = info.get("trailingEps")
         ftd = info.get("firstTradeDateEpochUtc") or info.get("firstTradeDateMilliseconds")
         if ftd:
@@ -255,9 +261,10 @@ def tag(t: str) -> dict:
 
 
 def fmt_tag(tg: dict) -> str:
-    g = "/".join(f"{x:+.0f}" for x in tg["rev_g"][:2]) or "n/a"
+    g = ("/".join(f"{x:+.0f}" for x in tg["rev_g"][:2]) + "%") if tg["rev_g"] else "n/a"
     mc = f"${tg['mcap']/1e9:.1f}B" if tg.get("mcap") else "mcap n/a"
-    return f"{tg['basket']} {tg['bucket']} · sales yoy {g}% · {mc}"
+    lab = " ".join(x for x in (tg["basket"], tg["bucket"]) if x != "-")
+    return f"{lab + ' · ' if lab else ''}sales yoy {g} · {mc}"
 
 
 # ---------------------------------------------------------------- market monitor
@@ -311,12 +318,14 @@ def scan_eod(bars: dict[str, pd.DataFrame], cfg: dict) -> dict:
         gap = (f["o"][i] / c[i - 1] - 1) * 100
         if v[i] >= cfg["ep_min_vol"] and gap >= cfg["ep_gap_pct"] and c[i] >= f["o"][i] * 0.98:
             kind = "EP" if v[i] >= cfg["ep_vol_mult"] * avg50 else "LAVA"
+            if gap >= 20 and f["rng"][i] / c[i] < 0.02:
+                kind = "M&A?"   # huge gap + pinned range = likely takeover, no momentum to trade
             ep.append({"t": t, "kind": kind, "close": c[i], "gap": gap, "chg": f["chg"][i],
                        "vol": v[i], "vx": v[i] / avg50, "low": f["l"][i], "high": f["h"][i]})
         # --- MB: 4% breakout + 2LYNCH
         if burst_mask(f, cfg["mb_pct"], cfg["mb_min_vol"])[i]:
             s, letters = lynch(f, i, cfg)
-            if s >= cfg["mb_min_score"]:
+            if s >= cfg["mb_min_score"] and v[i] >= cfg["mb_min_vx"] * avg50:
                 mb.append({"t": t, "close": c[i], "chg": f["chg"][i], "vol": v[i], "vx": v[i] / avg50,
                            "low": f["l"][i], "high": f["h"][i], "score": s, "letters": letters})
         # --- ANTS: momentum + tight quiet days
@@ -400,17 +409,23 @@ def run_eod(cfg: dict, tickers: list[str] | None, send: bool) -> str:
     tags = {}
     for x in res["ep"][:10]:
         tags[x["t"]] = tag(x["t"])
-    for x in res["mb"][:cfg["mb_max_alerts"]]:
+    # tag a wider MB pool, then rank growth names (Bonde buckets) first
+    for x in res["mb"][:3 * cfg["mb_max_alerts"]]:
         tags.setdefault(x["t"], tag(x["t"]))
+    pri = {"B0": 0, "B1": 1}
+    res["mb"].sort(key=lambda x: (pri.get(tags.get(x["t"], {}).get("bucket"), 2), -x["score"], -x["vx"]))
 
     msg = [f"🐝 <b>Stockbee EOD</b> {asof.date() if asof is not None else ''} · {len(bars)} stocks · net liq ${cfg['net_liq']:,.0f}",
            fmt_mon(mon), ""]
     eps = [x for x in res["ep"] if x["kind"] == "EP"]
     lava = [x for x in res["ep"] if x["kind"] == "LAVA"]
+    mna = [x for x in res["ep"] if x["kind"] == "M&A?"]
     msg.append(f"<b>EP — 9M+ gap ups ({len(eps)})</b>")
     msg += [ep_line(x, tags.get(x["t"]), cfg) for x in eps[:8]] or ["   none"]
     if lava:
         msg.append(f"Liquid lava (9M, normal for them): " + ", ".join(f"{x['t']} {x['chg']:+.1f}%" for x in lava[:8]))
+    if mna:
+        msg.append("Skipped, likely takeover (pinned after gap): " + ", ".join(f"{x['t']} {x['gap']:+.0f}%" for x in mna))
     msg.append("")
     msg.append(f"<b>MB — 4% bursts, 2LYNCH ≥{cfg['mb_min_score']} ({len(res['mb'])})</b>")
     for x in res["mb"][:cfg["mb_max_alerts"]]:

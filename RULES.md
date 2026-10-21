@@ -26,8 +26,8 @@ Separate lane: does **not** change the SEPA/options rules above. Code: `stockbee
 | Universe | All US-listed common stocks, price ≥ $3, 20d avg vol ≥ 300K |
 | Regime | Market monitor (4%↑ vs 4%↓, 5d/10d ratio) sets size + targets: THRUST full · CONSTRUCTIVE normal · CHOPPY singles 5–8%, half size · WEAK quarter size |
 | Primary setup | **ANTS** (TTT after a ≥20% month) — buy at the close (MOC/LOC before 15:50 ET), stop = 3-day low (max −2.5%), sell into the gap, cut next morning if no follow-through |
-| Secondary | **EP** (9M+ share gap, ≥3× avg vol) — day-2 buy only if it holds above the EP-day low; CAT full risk, DOG ≤5% notional |
-| Watch only | **MB** 4% bursts with 2LYNCH ≥ 4/6 — day-2 buy only if ≤3% above day-1 close, stop LOD (max −2.5%), sell ⅓ at +8%, hold 3–5d (5–10d if $100+) |
+| Secondary | **EP** (9M+ share gap, ≥3× avg vol; pinned takeover gaps skipped) — day-2 buy only if it holds above the EP-day low; CAT full risk, DOG ≤5% notional |
+| Watch only | **MB** 4% bursts with 2LYNCH ≥ 5/6 + volume ≥1.2× avg, growth (B0/B1) names ranked first — day-2 buy only if ≤3% above day-1 close, stop LOD (max −2.5%), sell ⅓ at +8%, hold 3–5d (5–10d if $100+) |
 | Risk | 0.5% of net liq per trade at the stop; notional ≤20% per position |
 | Never | Chase >3% above the alert price · widen a stop · average down · hold a failed burst |
 | Review | After 30 logged trades (R-multiples): keep / drop each setup on expectancy |

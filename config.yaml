@@ -158,7 +158,8 @@ stockbee:
   min_price: 3.0
   min_avg_vol: 300000       # 20d avg shares, tradeability floor
   mb_pct: 4.0               # 4% breakout scan
-  mb_min_score: 4           # 2LYNCH score (of 6) needed to alert
+  mb_min_score: 5           # 2LYNCH score (of 6) needed to alert
+  mb_min_vx: 1.2            # breakout volume vs 50d avg
   mb_max_alerts: 10
   ep_min_vol: 9000000       # 9M-share day
   ep_gap_pct: 4.0
