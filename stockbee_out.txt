@@ -1,0 +1,109 @@
+2026-10-21 01:43:05,925 INFO stockbee: universe: 5130 symbols
+2026-10-21 01:43:30,556 ERROR yfinance: 
+1 Failed download:
+2026-10-21 01:43:30,556 ERROR yfinance: ['AMAL']: OperationalError('database is locked')
+2026-10-21 01:43:30,781 INFO stockbee: downloaded 400/5130 (have 391)
+2026-10-21 01:43:52,206 INFO stockbee: downloaded 800/5130 (have 784)
+2026-10-21 01:44:16,090 INFO stockbee: downloaded 1200/5130 (have 1181)
+2026-10-21 01:44:45,547 INFO stockbee: downloaded 1600/5130 (have 1579)
+2026-10-21 01:45:13,104 INFO stockbee: downloaded 2000/5130 (have 1974)
+2026-10-21 01:45:35,359 INFO stockbee: downloaded 2400/5130 (have 2371)
+2026-10-21 01:45:57,233 INFO stockbee: downloaded 2800/5130 (have 2767)
+2026-10-21 01:46:20,065 INFO stockbee: downloaded 3200/5130 (have 3165)
+2026-10-21 01:46:41,052 ERROR yfinance: Failed to get ticker 'PBAM' reason: Failed to perform, curl: (28) Connection timed out after 10002 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-10-21 01:46:41,394 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:46:41,578 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:46:41,992 ERROR yfinance: Failed to get ticker 'PD' reason: Failed to perform, curl: (28) Connection timed out after 10001 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-10-21 01:46:42,322 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:46:42,608 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:46:48,358 INFO stockbee: downloaded 3600/5130 (have 3561)
+2026-10-21 01:47:09,736 INFO stockbee: downloaded 4000/5130 (have 3958)
+2026-10-21 01:47:30,334 INFO stockbee: downloaded 4400/5130 (have 4351)
+2026-10-21 01:47:51,274 INFO stockbee: downloaded 4800/5130 (have 4745)
+2026-10-21 01:48:08,486 INFO stockbee: downloaded 5130/5130 (have 5069)
+2026-10-21 01:48:10,209 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:10,580 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:11,010 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:11,360 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:11,706 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:12,092 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:12,546 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:12,826 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:13,284 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:13,584 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:13,983 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:14,301 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:14,801 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:15,070 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:15,566 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:15,910 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:16,294 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:16,604 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:17,027 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:17,378 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:17,756 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:18,038 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:18,499 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:18,796 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:19,294 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:19,581 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-10-21 01:48:20,025 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-10-21 01:48:20,295 ERROR yfinance: HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+🐝 <b>Stockbee EOD</b> 2026-10-20 · 5059 stocks · net liq $5,657
+<b>Market monitor 2026-10-20</b>
+4%↑ 346 · 4%↓ 87 · 5d 0.75 · 10d 0.62 · Q±25% 450/998
+→ WEAK — few MBs; watch selling-exhaustion reversals, quarter size
+
+<b>EP — 9M+ gap ups (3)</b>
+<b>SAIQ</b> [EP] 6.84 gap +35.5% day +100.6% vol 57.0M (27.7x)
+   SAIQ · - - · sales yoy n/a% · mcap n/a
+   D2: buy if holds > EP low 4.52 · stop 6.29 · 51 sh · peel ⅓ into strength
+<b>BRZE</b> [EP] 45.57 gap +51.6% day +51.7% vol 64.6M (25.6x)
+   BRZE · - - · sales yoy +26% · mcap n/a
+   D2: buy if holds > EP low 45.26 · stop 45.26 · 24 sh · peel ⅓ into strength
+<b>MYGN</b> [EP] 5.54 gap +26.8% day +31.6% vol 24.0M (13.1x)
+   MYGN · - - · sales yoy -11% · mcap n/a
+   D2: buy if holds > EP low 5.25 · stop 5.25 · 97 sh · peel ⅓ into strength
+Liquid lava (9M, normal for them): KVYO +11.9%
+
+<b>MB — 4% bursts, 2LYNCH ≥4 (170)</b>
+<b>GDRX</b> 3.52 +4.5% vol 2.0x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤3.63 (else skip) · stop LOD, max 3.43 (−2.5%) · 321 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy -1% · mcap n/a
+<b>SOLS</b> 63.06 +4.3% vol 1.8x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤64.95 (else skip) · stop LOD, max 61.48 (−2.5%) · 17 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy +11% · mcap n/a
+<b>ACIW</b> 54.54 +4.4% vol 1.6x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤56.18 (else skip) · stop LOD, max 53.18 (−2.5%) · 20 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy +7% · mcap n/a
+<b>XRAY</b> 8.87 +5.3% vol 1.4x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤9.14 (else skip) · stop LOD, max 8.65 (−2.5%) · 127 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy -4% · mcap n/a
+<b>TDOC</b> 6.21 +8.4% vol 1.4x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤6.40 (else skip) · stop LOD, max 6.05 (−2.5%) · 182 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy -4% · mcap n/a
+<b>CRL</b> 315.45 +5.1% vol 1.4x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤324.91 (else skip) · stop LOD, max 307.56 (−2.5%) · 3 sh · sell ⅓ +8% · hold 5–10d
+   - - · sales yoy -3% · mcap n/a
+<b>PAGS</b> 11.72 +5.3% vol 1.1x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤12.07 (else skip) · stop LOD, max 11.43 (−2.5%) · 96 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy +0% · mcap n/a
+<b>TYL</b> 377.17 +4.7% vol 0.9x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤388.49 (else skip) · stop LOD, max 367.74 (−2.5%) · 2 sh · sell ⅓ +8% · hold 5–10d
+   - - · sales yoy +8% · mcap n/a
+<b>KYMR</b> 113.46 +5.0% vol 0.9x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤116.86 (else skip) · stop LOD, max 110.62 (−2.5%) · 9 sh · sell ⅓ +8% · hold 5–10d
+   CAT B1 · sales yoy +466% · mcap n/a
+<b>MSGE</b> 80.68 +4.0% vol 0.7x · 2LYNCH 6/6 [2LYNCH]
+   D2 buy ≤83.10 (else skip) · stop LOD, max 78.66 (−2.5%) · 14 sh · sell ⅓ +8% · hold 3–5d
+   - - · sales yoy +27% · mcap n/a
+
+<b>ANTS ready — TTT done (2)</b> (buy next close if day 4 stays tight)
+<b>BMBL</b> 5.95 · 1M mom +114% · 3d box 5.93–5.96
+   buy at close (MOC/LOC before 15:50 ET) · stop 5.93 · 190 sh · sell into gap / cut next AM if no follow-through
+<b>PTC</b> 193.35 · 1M mom +43% · 3d box 192.76–194.10
+   buy at close (MOC/LOC before 15:50 ET) · stop 192.76 · 5 sh · sell into gap / cut next AM if no follow-through
+<b>ANTS watch — 2 tight days (5)</b>: EGG, PCRX, SNPS, OPCH, ELF
+   → pre-close run (~6:30am Melb) confirms day 3
+
+Rules: MB/ANTS stop ≤2.5% · cut fast if no follow-through · sell into strength · log every trade in R
