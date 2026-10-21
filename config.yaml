@@ -152,3 +152,20 @@ alerts:
 
 # open positions + net liq now live in book.csv (one book for scanner, risk gate and sizing).
 # account.net_liq above is only used if book.csv is missing.
+
+# --- Stockbee lane (Pradeep Bonde) — stocks only, see RULES.md "Stockbee lane" ---
+stockbee:
+  min_price: 3.0
+  min_avg_vol: 300000       # 20d avg shares, tradeability floor
+  mb_pct: 4.0               # 4% breakout scan
+  mb_min_score: 4           # 2LYNCH score (of 6) needed to alert
+  mb_max_alerts: 10
+  ep_min_vol: 9000000       # 9M-share day
+  ep_gap_pct: 4.0
+  ep_vol_mult: 3.0          # below 3x 50d avg -> "liquid lava", not EP
+  ants_mom_pct: 20.0        # up >=20% in ~1 month before the tight days
+  ants_tight_atr: 0.70
+  stop_max_pct: 2.5         # MB / ANTS hard stop
+  ep_stop_max_pct: 8.0
+  risk_pct: 0.5             # % of net liq risked per trade (net liq from book.csv)
+  max_pos_pct: 20.0         # notional cap per position
