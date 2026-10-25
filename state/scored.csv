@@ -7,7 +7,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-19|options_map|AMZN|CALL,2026-10-19,options_map,AMZN,CALL,B,,0.6,262.44,,,1,0,stop,4,-1.0
 2026-10-20|options_map|AMZN|CALL,2026-10-20,options_map,AMZN,CALL,B,,0.6,262.93,,,1,0,stop,3,-1.0
 2026-10-21|options_map|AMZN|CALL,2026-10-21,options_map,AMZN,CALL,B,,0.6,264.15,,,1,0,stop,2,-1.44
-2026-10-22|options_map|AMZN|CALL,2026-10-22,options_map,AMZN,CALL,B,,0.6,250.58,,,1,0,stop,1,-3.5
+2026-10-22|options_map|AMZN|CALL,2026-10-22,options_map,AMZN,CALL,B,,0.6,250.58,,,1,0,stop,1,-2.98
 2026-09-24|options_map|TSLA|PUT,2026-09-24,options_map,TSLA,PUT,C,,0.52,379.64,6.72,1.33,1,0,stop,20,-13.83
 2026-09-25|options_map|TSLA|PUT,2026-09-25,options_map,TSLA,PUT,C,,0.52,382.5,3.11,2.69,0,1,time,20,0.69
 2026-09-28|options_map|TSLA|PUT,2026-09-28,options_map,TSLA,PUT,C,,0.52,357.71,-5.88,,0,,open,19,
