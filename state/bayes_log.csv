@@ -26,3 +26,7 @@ date,ticker,setup,bias,spot,prior,lr,post,feats,p_be_mdl,p_be_mkt,edge_pp,usable
 2026-10-23,CRWV,BEARDOWN,SHORT,54.83,0.478,1.13,0.509,rs_with;rsi_hot;nash_with;tape_with,0.506,0.518,-1.2,-4.8
 2026-10-26,AAPL,PULLBACK,LONG,343.91,0.568,1.41,0.65,tt_full;rs_with;tape_with,0.437,0.36,7.6,4.3
 2026-10-26,CRWV,BEARDOWN,SHORT,55.19,0.478,1.0,0.479,rs_with;adx_strong;rsi_hot;nash_with;tape_against,0.485,0.514,-2.9,-6.3
+2026-10-27,PLTR,PULLBACK,LONG,198.73,0.564,1.51,0.662,tt_full;rs_with;nash_with;tape_with,0.397,0.307,9.0,5.9
+2026-10-27,AAPL,PULLBACK,LONG,347.1,0.568,1.41,0.65,tt_full;rs_with;tape_with,0.421,0.345,7.6,4.3
+2026-10-27,CRWV,BEARDOWN,SHORT,59.57,0.478,1.13,0.509,rs_with;adx_strong;nash_with;tape_against,0.49,0.502,-1.2,-4.7
+2026-10-27,SPY,PULLBACK,LONG,769.71,0.603,1.07,0.62,tape_with,0.419,0.371,4.7,1.7
