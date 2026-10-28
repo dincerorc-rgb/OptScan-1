@@ -1,12 +1,12 @@
 {
- "asof": "2026-10-26",
+ "asof": "2026-10-27",
  "monitor": {
-  "date": "2026-10-26",
-  "up4": 1,
-  "dn4": 1,
-  "r5": 0.31,
-  "r10": 0.33,
-  "q_up25": 3,
+  "date": "2026-10-27",
+  "up4": 0,
+  "dn4": 2,
+  "r5": 0.36,
+  "r10": 0.4,
+  "q_up25": 0,
   "q_dn25": 5,
   "regime": "WEAK \u2014 few MBs; watch selling-exhaustion reversals, quarter size"
  },
