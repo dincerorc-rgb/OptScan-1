@@ -1,13 +1,13 @@
 {
- "asof": "2026-10-28",
+ "asof": "2026-10-29",
  "monitor": {
-  "date": "2026-10-28",
-  "up4": 0,
-  "dn4": 0,
-  "r5": 0.7,
-  "r10": 0.68,
+  "date": "2026-10-29",
+  "up4": 3,
+  "dn4": 2,
+  "r5": 1.0,
+  "r10": 0.5,
   "q_up25": 1,
-  "q_dn25": 10,
+  "q_dn25": 6,
   "regime": "WEAK \u2014 few MBs; watch selling-exhaustion reversals, quarter size"
  },
  "ants_watch": [],
