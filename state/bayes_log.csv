@@ -41,3 +41,4 @@ date,ticker,setup,bias,spot,prior,lr,post,feats,p_be_mdl,p_be_mkt,edge_pp,usable
 2026-10-29,AMD,PULLBACK,LONG,566.42,0.53,1.41,0.614,tt_full;rs_with;tape_with,,,,
 2026-10-30,AAPL,PULLBACK,LONG,344.05,0.576,1.12,0.603,tt_full;rs_with;pcr_against;tape_against,0.413,0.36,5.3,2.0
 2026-10-30,CRWV,BEARDOWN,SHORT,53.94,0.478,1.38,0.557,rs_with;adx_strong;nash_with;tape_with,0.501,0.489,1.2,-2.3
+2026-11-02,CRWV,BEARDOWN,SHORT,50.15,0.478,1.38,0.557,rs_with;adx_strong;nash_with;tape_with,0.54,0.531,1.0,-2.5
