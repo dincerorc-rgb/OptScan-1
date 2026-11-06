@@ -485,21 +485,21 @@
  },
  "RKLB": {
   "ticker": "RKLB",
-  "asof": "2026-10-30",
+  "asof": "2026-11-06",
   "etf": false,
-  "mcap": 34803142656.0,
+  "mcap": 29406513152.0,
   "short_pct": 0.0762,
-  "inst_pct": 0.62273,
+  "inst_pct": 0.62235,
   "op_margin": -0.24572,
   "rev_growth_q": 0.62,
   "cash": 2302184960.0,
   "debt": 133691000.0,
   "fcf_ttm": -251963632.0,
   "shares": 598459739.0,
-  "fwd_pe": 946.7734,
+  "fwd_pe": 799.9653,
   "peg": null,
   "eps_growth": null,
-  "price": 54.43,
+  "price": 45.99,
   "fcf_q": [
    -110122000.0,
    -77397000.0,
@@ -541,7 +541,7 @@
    -148950000.0
   ],
   "misses_4q": 0,
-  "ret5_vs_spy_pp": 207.0
+  "ret5_vs_spy_pp": 140.7
  },
  "CRWV": {
   "ticker": "CRWV",
@@ -604,21 +604,21 @@
  },
  "MU": {
   "ticker": "MU",
-  "asof": "2026-10-30",
+  "asof": "2026-11-06",
   "etf": false,
-  "mcap": 999397457920.0,
+  "mcap": 742654935040.0,
   "short_pct": 0.02,
-  "inst_pct": 0.8003,
+  "inst_pct": 0.79791,
   "op_margin": 0.80678004,
   "rev_growth_q": 3.793,
   "cash": 43434000384.0,
   "debt": 5178999808.0,
   "fcf_ttm": 29140250624.0,
   "shares": 1131423212.0,
-  "fwd_pe": 4.2506804,
+  "fwd_pe": 3.1593592,
   "peg": 0.16,
   "eps_growth": 10.595,
-  "price": 883.31,
+  "price": 656.39,
   "fcf_q": [
    32863000000.0,
    17562000000.0,
@@ -660,7 +660,7 @@
    -6117000000.0
   ],
   "misses_4q": 0,
-  "ret5_vs_spy_pp": 1105.0
+  "ret5_vs_spy_pp": 734.6
  },
  "OKLO": {
   "ticker": "OKLO",
@@ -909,7 +909,7 @@
  },
  "QQQ": {
   "ticker": "QQQ",
-  "asof": "2026-10-30",
+  "asof": "2026-11-06",
   "etf": true
  },
  "META": {
