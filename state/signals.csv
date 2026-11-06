@@ -249,3 +249,5 @@ ts_utc,date,source,ticker,direction,grade,setup,spot,entry,target,stop,invalid,p
 2026-11-06T20:02Z,2026-11-06,options_map,AMD,CALL,C,,445.41,445.41,550.0,400.0,400.0,0.52,AMD  spot 445.41
 2026-11-06T20:02Z,2026-11-06,options_map,DRAM,PUT,C,,39.12,39.12,35.0,43.0,43.0,0.52,DRAM  spot 39.12
 2026-11-06T20:02Z,2026-11-06,options_map,UUUU,PUT,B,,6.71,6.71,6.0,7.0,7.0,0.6,UUUU  spot 6.71
+2026-11-06T23:48Z,2026-11-06,options_map,META,CALL,C,,611.95,611.95,750.0,600.0,600.0,0.52,META  spot 611.95
+2026-11-06T23:48Z,2026-11-06,options_map,TSLA,PUT,C,,358.35,358.35,300.0,400.0,400.0,0.52,TSLA  spot 358.35
