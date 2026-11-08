@@ -10,7 +10,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-22|options_map|AMZN|CALL,2026-10-22,options_map,AMZN,CALL,B,,0.6,250.58,-2.71,,1,0,stop,11,-2.98
 2026-10-27|options_map|AMZN|CALL,2026-10-27,options_map,AMZN,CALL,C,,0.52,254.03,-1.31,,1,0,stop,8,-1.76
 2026-10-28|options_map|AMZN|CALL,2026-10-28,options_map,AMZN,CALL,C,,0.52,253.74,4.84,,1,0,stop,7,-1.82
-2026-10-30|options_map|AMZN|CALL,2026-10-30,options_map,AMZN,CALL,C,,0.52,240.18,nan,,0,,open,5,
+2026-10-30|options_map|AMZN|CALL,2026-10-30,options_map,AMZN,CALL,C,,0.52,240.18,7.96,,0,,open,5,
 2026-11-04|options_map|AMZN|CALL,2026-11-04,options_map,AMZN,CALL,C,,0.52,267.61,,,1,0,stop,2,-1.0
 2026-11-05|options_map|AMZN|CALL,2026-11-05,options_map,AMZN,CALL,C,,0.52,265.98,,,1,0,stop,1,-1.03
 2026-11-05|options_map|AMZN|PUT,2026-11-05,options_map,AMZN,PUT,C,,0.52,258.84,,,1,0,stop,1,-1.0
@@ -24,7 +24,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-21|options_map|TSLA|PUT,2026-10-21,options_map,TSLA,PUT,C,,0.52,377.49,-7.08,,1,0,stop,12,-1.0
 2026-10-22|options_map|TSLA|PUT,2026-10-22,options_map,TSLA,PUT,C,,0.52,378.39,-6.58,,1,0,stop,11,-1.32
 2026-10-29|options_map|TSLA|PUT,2026-10-29,options_map,TSLA,PUT,B,,0.6,396.2,13.25,,1,0,stop,6,-1.0
-2026-10-30|options_map|TSLA|PUT,2026-10-30,options_map,TSLA,PUT,C,,0.52,395.04,nan,,0,,open,5,
+2026-10-30|options_map|TSLA|PUT,2026-10-30,options_map,TSLA,PUT,C,,0.52,395.04,9.32,,0,,open,5,
 2026-11-03|options_map|TSLA|PUT,2026-11-03,options_map,TSLA,PUT,C,,0.52,397.18,,,0,,open,3,
 2026-11-04|options_map|TSLA|PUT,2026-11-04,options_map,TSLA,PUT,C,,0.52,396.23,,,0,,open,2,
 2026-11-05|options_map|TSLA|PUT,2026-11-05,options_map,TSLA,PUT,C,,0.52,382.71,,,0,,open,1,
@@ -42,7 +42,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-26|options_map|QQQ|CALL,2026-10-26,options_map,QQQ,CALL,C,,0.52,713.52,-4.55,,1,0,stop,9,-1.21
 2026-10-27|options_map|QQQ|PUT,2026-10-27,options_map,QQQ,PUT,C,,0.52,720.48,4.89,,0,1,target,8,1.02
 2026-10-28|options_map|QQQ|PUT,2026-10-28,options_map,QQQ,PUT,C,,0.52,725.62,4.64,,0,1,target,7,1.33
-2026-10-30|options_map|QQQ|CALL,2026-10-30,options_map,QQQ,CALL,B,,0.6,685.21,nan,,1,0,stop,5,-1.0
+2026-10-30|options_map|QQQ|CALL,2026-10-30,options_map,QQQ,CALL,B,,0.6,685.21,-4.25,,1,0,stop,5,-1.0
 2026-11-02|options_map|QQQ|CALL,2026-11-02,options_map,QQQ,CALL,C,,0.52,683.8,,,1,0,stop,4,-1.0
 2026-11-03|options_map|QQQ|CALL,2026-11-03,options_map,QQQ,CALL,C,,0.52,682.23,,,1,0,stop,3,-1.0
 2026-11-04|options_map|QQQ|CALL,2026-11-04,options_map,QQQ,CALL,C,,0.52,686.64,,,1,0,stop,2,-1.0
@@ -55,7 +55,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-27|options_map|DRAM|PUT,2026-10-27,options_map,DRAM,PUT,C,,0.52,50.37,5.42,,0,1,target,8,1.28
 2026-10-28|options_map|DRAM|PUT,2026-10-28,options_map,DRAM,PUT,C,,0.52,52.8,14.56,,0,1,target,7,7.53
 2026-10-29|options_map|DRAM|PUT,2026-10-29,options_map,DRAM,PUT,C,,0.52,51.38,27.97,,0,1,target,6,2.22
-2026-10-30|options_map|DRAM|PUT,2026-10-30,options_map,DRAM,PUT,B,,0.6,47.2,nan,,0,1,target,5,0.92
+2026-10-30|options_map|DRAM|PUT,2026-10-30,options_map,DRAM,PUT,B,,0.6,47.2,16.76,,0,1,target,5,0.92
 2026-11-06|options_map|DRAM|PUT,2026-11-06,options_map,DRAM,PUT,C,,0.52,39.12,,,,,open,0,
 2026-09-24|options_map|UUUU|PUT,2026-09-24,options_map,UUUU,PUT,C,,0.52,11.34,5.56,32.19,0,1,target,20,0.5
 2026-09-25|options_map|UUUU|PUT,2026-09-25,options_map,UUUU,PUT,B,,0.6,11.52,6.86,34.72,0,1,target,20,0.61
@@ -85,7 +85,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-27|options_map|MSFT|CALL,2026-10-27,options_map,MSFT,CALL,C,,0.52,530.7,-1.83,,1,0,stop,8,-1.0
 2026-10-28|options_map|MSFT|CALL,2026-10-28,options_map,MSFT,CALL,B,,0.6,529.11,5.04,,1,0,stop,7,-1.0
 2026-10-29|options_map|MSFT|CALL,2026-10-29,options_map,MSFT,CALL,B,,0.6,527.72,1.56,,1,0,stop,6,-1.0
-2026-10-30|options_map|MSFT|CALL,2026-10-30,options_map,MSFT,CALL,C,,0.52,522.66,nan,,1,0,stop,5,-1.0
+2026-10-30|options_map|MSFT|CALL,2026-10-30,options_map,MSFT,CALL,C,,0.52,522.66,1.52,,1,0,stop,5,-1.0
 2026-11-03|options_map|MSFT|CALL,2026-11-03,options_map,MSFT,CALL,C,,0.52,521.53,,,0,,open,3,
 2026-11-04|options_map|MSFT|CALL,2026-11-04,options_map,MSFT,CALL,C,,0.52,517.53,,,0,,open,2,
 2026-11-04|run|MSFT|CALL,2026-11-04,run,MSFT,CALL,S,BREAKOUT/SEPA,0.58,555.8,,,0,,open,2,
@@ -113,7 +113,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-28|run|SPY|CALL,2026-10-28,run,SPY,CALL,S,PULLBACK/QM,0.61,781.62,-1.89,,1,,untriggered,7,
 2026-10-29|run|SPY|CALL,2026-10-29,run,SPY,CALL,S,PULLBACK/QM,0.61,781.62,-6.22,,1,,untriggered,6,
 2026-10-29|options_map|SPY|CALL,2026-10-29,options_map,SPY,CALL,C,,0.52,764.12,-4.07,,1,0,stop,6,-1.0
-2026-10-30|options_map|SPY|CALL,2026-10-30,options_map,SPY,CALL,B,,0.6,751.39,nan,,0,,open,5,
+2026-10-30|options_map|SPY|CALL,2026-10-30,options_map,SPY,CALL,B,,0.6,751.39,-2.14,,0,,open,5,
 2026-11-02|options_map|SPY|CALL,2026-11-02,options_map,SPY,CALL,B,,0.6,753.6,,,0,,open,4,
 2026-11-03|options_map|SPY|CALL,2026-11-03,options_map,SPY,CALL,B,,0.6,752.66,,,0,,open,3,
 2026-11-04|options_map|SPY|PUT,2026-11-04,options_map,SPY,PUT,B,,0.6,767.29,,,0,,open,2,
@@ -166,7 +166,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-27|options_map|META|CALL,2026-10-27,options_map,META,CALL,C,,0.52,622.64,-0.26,,1,0,stop,8,-1.0
 2026-10-28|options_map|META|CALL,2026-10-28,options_map,META,CALL,B,,0.6,612.75,2.82,,1,0,stop,7,-1.0
 2026-10-29|options_map|META|CALL,2026-10-29,options_map,META,CALL,C,,0.52,627.07,-3.51,,1,0,stop,6,-1.0
-2026-10-30|options_map|META|CALL,2026-10-30,options_map,META,CALL,B,,0.6,614.17,nan,,1,0,stop,5,-1.0
+2026-10-30|options_map|META|CALL,2026-10-30,options_map,META,CALL,B,,0.6,614.17,-0.65,,1,0,stop,5,-1.0
 2026-11-02|options_map|META|CALL,2026-11-02,options_map,META,CALL,C,,0.52,608.04,,,1,0,stop,4,-1.0
 2026-11-03|options_map|META|CALL,2026-11-03,options_map,META,CALL,C,,0.52,608.39,,,1,0,stop,3,-1.0
 2026-11-04|options_map|META|CALL,2026-11-04,options_map,META,CALL,C,,0.52,629.39,,,1,0,stop,2,-1.0
@@ -185,7 +185,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-22|options_map|MU|CALL,2026-10-22,options_map,MU,CALL,C,,0.52,848.0,10.17,,1,0,stop,11,-1.0
 2026-10-26|options_map|MU|CALL,2026-10-26,options_map,MU,CALL,C,,0.52,911.97,-8.59,,1,0,stop,9,-1.0
 2026-10-29|options_map|MU|CALL,2026-10-29,options_map,MU,CALL,C,,0.52,901.44,-27.18,,1,0,stop,6,-1.0
-2026-10-30|options_map|MU|PUT,2026-10-30,options_map,MU,PUT,C,,0.52,886.4,nan,,0,1,target,5,6.35
+2026-10-30|options_map|MU|PUT,2026-10-30,options_map,MU,PUT,C,,0.52,886.4,22.16,,0,1,target,5,6.35
 2026-11-04|options_map|MU|PUT,2026-11-04,options_map,MU,PUT,C,,0.52,861.6,,,0,1,target,2,1.6
 2026-11-05|run|MU|PUT,2026-11-05,run,MU,PUT,S,BEARDOWN,0.42,656.39,,,0,,open,1,
 2026-11-06|run|MU|PUT,2026-11-06,run,MU,PUT,S,BEARDOWN,0.42,656.39,,,,,open,0,
@@ -210,7 +210,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-28|options_map|AAPL|PUT,2026-10-28,options_map,AAPL,PUT,C,,0.52,344.65,-1.41,,1,0,stop,7,-1.18
 2026-10-28|run|AAPL|CALL,2026-10-28,run,AAPL,CALL,S,PULLBACK/SEPA,0.66,351.73,-0.63,,1,0,stop,7,-1.0
 2026-10-29|run|AAPL|CALL,2026-10-29,run,AAPL,CALL,S,PULLBACK/SEPA,0.65,351.73,-2.15,,1,0,stop,6,-1.0
-2026-10-30|run|AAPL|CALL,2026-10-30,run,AAPL,CALL,S,PULLBACK/SEPA,0.6,351.73,nan,,1,0,stop,5,-1.0
+2026-10-30|run|AAPL|CALL,2026-10-30,run,AAPL,CALL,S,PULLBACK/SEPA,0.6,351.73,-2.66,,1,0,stop,5,-1.0
 2026-11-03|run|AAPL|CALL,2026-11-03,run,AAPL,CALL,S,PULLBACK/SEPA,0.6,351.73,,,0,,open,3,
 2026-11-05|options_map|AAPL|PUT,2026-11-05,options_map,AAPL,PUT,C,,0.52,344.97,,,0,,open,1,
 2026-11-05|run|AAPL|CALL,2026-11-05,run,AAPL,CALL,S,PULLBACK/SEPA,0.61,354.5,,,0,,untriggered,1,
@@ -242,7 +242,7 @@ key,date,source,ticker,direction,grade,setup,p,ref,r5,r20,invalidated,outcome,st
 2026-10-27|run|CRWV|PUT,2026-10-27,run,CRWV,PUT,S,BEARDOWN,0.51,59.57,9.79,,0,1,r5,8,
 2026-10-28|run|CRWV|PUT,2026-10-28,run,CRWV,PUT,S,BEARDOWN,0.5,63.93,24.26,,0,1,r5,7,
 2026-10-29|run|CRWV|PUT,2026-10-29,run,CRWV,PUT,S,BEARDOWN,0.5,59.57,26.71,,0,1,r5,6,
-2026-10-30|run|CRWV|PUT,2026-10-30,run,CRWV,PUT,S,BEARDOWN,0.56,53.94,nan,,0,0,r5,5,
+2026-10-30|run|CRWV|PUT,2026-10-30,run,CRWV,PUT,S,BEARDOWN,0.56,53.94,13.98,,0,1,r5,5,
 2026-11-02|run|CRWV|PUT,2026-11-02,run,CRWV,PUT,S,BEARDOWN,0.56,50.15,,,0,,open,4,
 2026-11-03|run|CRWV|PUT,2026-11-03,run,CRWV,PUT,S,BEARDOWN,0.56,54.87,,,0,,open,3,
 2026-11-04|run|CRWV|PUT,2026-11-04,run,CRWV,PUT,S,BEARDOWN,0.56,53.74,,,0,,open,2,
