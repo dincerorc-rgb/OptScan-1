@@ -1,7 +1,9 @@
 {
-  "expires": "2026-10-09",
+  "expires": "2026-12-04",
+  "market_filter": {"symbol": "QQQ", "fast": 10, "slow": 20},
   "tickers": {
-    "CRWD": {"pivot": 268.95, "stop_ref": 261.58},
-    "MRVL": {"pivot": 267.50, "stop_ref": 256.24}
+    "AMZN": {"pivot": 275.35, "stop_ref": 265.62, "note": "4-day flag after 229->275 burst. Stop max 265.6."},
+    "TSLA": {"pivot": 414.23, "stop_ref": 385.20, "note": "Main pivot. Wants 3-5 tight days 385-401 first; merger EP possible."},
+    "AAPL": {"pivot": 359.40, "stop_ref": 349.33, "note": "ATH retest. Confirm only on a CLOSE >359.4 on >50M sh."}
   }
 }

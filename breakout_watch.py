@@ -97,7 +97,7 @@ def check(t, cfg, avgv, st, mins):
 
     if s["last"] > pivot:
         if pace >= VOL_PACE_MIN and "confirmed" not in f:
-            tg(f"✅ BREAKOUT — {core}\nEntry: hold above ORH; stop = LOD. Premium ≤1.5–2%.")
+            tg(f"✅ BREAKOUT — {core}\nEntry: hold above ORH; stop = LOD. Premium ≤1.5–2%." + (f"\n📝 {cfg['note']}" if cfg.get("note") else ""))
             f.append("confirmed")
         elif pace < VOL_PACE_MIN and "lowvol" not in f and "confirmed" not in f:
             tg(f"⚠️ LOW-VOL BREAK — {core}\nNot confirmed (need ≥{VOL_PACE_MIN}x). Wait.")
@@ -106,6 +106,23 @@ def check(t, cfg, avgv, st, mins):
             and s["last"] < pivot * (1 - FAIL_PCT / 100):
         tg(f"❌ FAILED — back below pivot\n{core}")
         f.append("failed")
+
+
+def market_check(mf, st):
+    """Qullamaggie market filter: alert once when the fast MA is above the slow MA and both are rising."""
+    if st.get("mf_fired"):
+        return
+    sym, fa, sl = mf.get("symbol", "QQQ"), int(mf.get("fast", 10)), int(mf.get("slow", 20))
+    d = yf.Ticker(sym).history(period="3mo", interval="1d", auto_adjust=False)["Close"].dropna()
+    if len(d) < sl + 2:
+        return
+    f, s_ = d.rolling(fa).mean(), d.rolling(sl).mean()
+    up = f.iloc[-1] > s_.iloc[-1] and f.iloc[-1] > f.iloc[-2] and s_.iloc[-1] > s_.iloc[-2]
+    print(f"market filter {sym}: {fa}d {f.iloc[-1]:.2f} vs {sl}d {s_.iloc[-1]:.2f} -> {'GREEN' if up else 'red'}")
+    if up:
+        tg(f"🟢 MARKET FILTER GREEN — {sym} {d.iloc[-1]:.2f}\n{fa}d {f.iloc[-1]:.2f} > {sl}d {s_.iloc[-1]:.2f}, both rising.\n"
+           f"Qullamaggie breakouts back ON. Check intraday; confirm on the close.")
+        st["mf_fired"] = True
 
 
 def main():
@@ -139,6 +156,11 @@ def main():
             avg[t] = avg_daily_vol(t)
         except Exception as e:
             print(t, "avg vol error", e); avg[t] = 0
+    if cfg.get("market_filter"):
+        try:
+            market_check(cfg["market_filter"], st)
+        except Exception as e:
+            print("market filter error", e)
     if not st.get("hello"):
         tg("👀 Watching: " + " | ".join(
             f"{t} > {c['pivot']:.2f} (avg vol {avg[t]/1e6:.1f}M)" for t, c in tickers.items()))
