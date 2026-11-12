@@ -1,18 +1,16 @@
 {
- "asof": "2026-11-10",
+ "asof": "2026-11-11",
  "monitor": {
-  "date": "2026-11-10",
-  "up4": 2,
-  "dn4": 2,
-  "r5": 0.23,
-  "r10": 0.33,
+  "date": "2026-11-11",
+  "up4": 1,
+  "dn4": 0,
+  "r5": 0.22,
+  "r10": 0.34,
   "q_up25": 5,
-  "q_dn25": 8,
+  "q_dn25": 6,
   "regime": "WEAK \u2014 few MBs; watch selling-exhaustion reversals, quarter size"
  },
  "ants_watch": [],
- "mb": [
-  "VCX"
- ],
+ "mb": [],
  "ep": []
 }
