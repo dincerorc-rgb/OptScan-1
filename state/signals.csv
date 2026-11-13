@@ -322,3 +322,4 @@ ts_utc,date,source,ticker,direction,grade,setup,spot,entry,target,stop,invalid,p
 2026-11-13T00:40Z,2026-11-13,options_map,MU,CALL,C,,818.09,818.09,900.0,800.0,800.0,0.52,MU  spot 818.09
 2026-11-13T00:40Z,2026-11-13,options_map,DRAM,PUT,C,,44.91,44.91,40.0,48.0,48.0,0.52,DRAM  spot 44.91
 2026-11-13T00:40Z,2026-11-13,options_map,UUUU,PUT,C,,6.71,6.71,6.0,7.0,7.0,0.52,UUUU  spot 6.71
+2026-11-13T01:04Z,2026-11-13,run,NVDA,PUT,S,BEARDOWN,173.73,,,,189.72,0.48,🔴 BUY PUTS NVDA 173.73  BEARDOWN SHORT ★2
