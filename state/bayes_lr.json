@@ -1,0 +1,16 @@
+{
+ "date": "2026-11-15",
+ "n": 42,
+ "lr": {
+  "tt_full": 1.23,
+  "tt_weak": 0.874,
+  "rs_with": 1.37,
+  "rs_against": 0.906,
+  "adx_strong": 1.232,
+  "rsi_hot": 0.979,
+  "pcr_against": 0.742,
+  "tape_with": 0.927,
+  "tape_against": 1.053,
+  "nash_with": 1.15
+ }
+}
