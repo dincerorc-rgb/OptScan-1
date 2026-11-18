@@ -664,21 +664,21 @@
  },
  "OKLO": {
   "ticker": "OKLO",
-  "asof": "2026-11-11",
+  "asof": "2026-11-18",
   "etf": false,
-  "mcap": 4899815936.0,
-  "short_pct": 0.2076,
-  "inst_pct": 0.46153998,
-  "op_margin": -44.30253,
+  "mcap": 4368628736.0,
+  "short_pct": 0.2188,
+  "inst_pct": 0.48656,
+  "op_margin": -85.870735,
   "rev_growth_q": null,
   "cash": 2501829120.0,
   "debt": 4409000.0,
   "fcf_ttm": -552209152.0,
   "shares": 195289593.0,
-  "fwd_pe": -21.985245,
+  "fwd_pe": -19.683933,
   "peg": null,
   "eps_growth": null,
-  "price": 25.09,
+  "price": 22.37,
   "fcf_q": [
    -199831000.0,
    -141683000.0,
@@ -720,7 +720,7 @@
    -10142085.0
   ],
   "misses_4q": 3,
-  "ret5_vs_spy_pp": 82.1
+  "ret5_vs_spy_pp": 63.9
  },
  "SPY": {
   "ticker": "SPY",
@@ -729,21 +729,21 @@
  },
  "HOOD": {
   "ticker": "HOOD",
-  "asof": "2026-11-11",
+  "asof": "2026-11-18",
   "etf": false,
-  "mcap": 73236955136.0,
-  "short_pct": 0.0465,
-  "inst_pct": 0.79277,
-  "op_margin": 0.48104,
+  "mcap": 62304993280.0,
+  "short_pct": 0.044899996,
+  "inst_pct": 0.81088996,
+  "op_margin": 0.45651,
   "rev_growth_q": 0.118,
   "cash": 24828999680.0,
   "debt": 22552000512.0,
   "fcf_ttm": null,
   "shares": 793425151.0,
-  "fwd_pe": 23.837019,
-  "peg": 1.3508,
+  "fwd_pe": 20.287409,
+  "peg": 1.2623,
   "eps_growth": -0.164,
-  "price": 81.33,
+  "price": 69.19,
   "fcf_q": [
    1204000000.0,
    696000000.0,
@@ -785,7 +785,7 @@
    -909000000.0
   ],
   "misses_4q": 1,
-  "ret5_vs_spy_pp": 65.1
+  "ret5_vs_spy_pp": 67.6
  },
  "GOOGL": {
   "ticker": "GOOGL",
@@ -914,21 +914,21 @@
  },
  "META": {
   "ticker": "META",
-  "asof": "2026-11-11",
+  "asof": "2026-11-18",
   "etf": false,
-  "mcap": 1607659945984.0,
+  "mcap": 1581980975104.0,
   "short_pct": 0.0341,
-  "inst_pct": 0.77908,
+  "inst_pct": 0.78472,
   "op_margin": 0.37777,
   "rev_growth_q": 0.261,
   "cash": 82448998400.0,
   "debt": 114842001408.0,
   "fcf_ttm": 16848499712.0,
-  "shares": 2214455318.0,
-  "fwd_pe": 17.66811,
-  "peg": 0.8337,
+  "shares": 2214472367.0,
+  "fwd_pe": 17.347364,
+  "peg": 0.8142,
   "eps_growth": 2.648,
-  "price": 628.77,
+  "price": 618.87,
   "fcf_q": [
    -1157000000.0,
    1746000000.0,
@@ -970,7 +970,7 @@
    19289000000.0
   ],
   "misses_4q": 2,
-  "ret5_vs_spy_pp": 12.4
+  "ret5_vs_spy_pp": 18.3
  },
  "NVDA": {
   "ticker": "NVDA",
