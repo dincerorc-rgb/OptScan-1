@@ -425,21 +425,21 @@
  },
  "TSLA": {
   "ticker": "TSLA",
-  "asof": "2026-11-18",
+  "asof": "2026-11-25",
   "etf": false,
-  "mcap": 1516752338944.0,
+  "mcap": 1520546873344.0,
   "short_pct": 0.020299999,
-  "inst_pct": 0.44684,
+  "inst_pct": 0.44779,
   "op_margin": 0.03026,
   "rev_growth_q": -0.002,
   "cash": 45447000064.0,
   "debt": 16444999680.0,
   "fcf_ttm": 4967249920.0,
   "shares": 3952757946.0,
-  "fwd_pe": 177.71233,
-  "peg": 4.4328,
+  "fwd_pe": 178.15692,
+  "peg": 4.4952,
   "eps_growth": -0.436,
-  "price": 383.72,
+  "price": 384.68,
   "fcf_q": [
    1531000000.0,
    -1099000000.0,
@@ -481,7 +481,7 @@
    7552000000.0
   ],
   "misses_4q": 1,
-  "ret5_vs_spy_pp": -65.3
+  "ret5_vs_spy_pp": -60.8
  },
  "RKLB": {
   "ticker": "RKLB",
@@ -664,21 +664,21 @@
  },
  "OKLO": {
   "ticker": "OKLO",
-  "asof": "2026-11-18",
+  "asof": "2026-11-25",
   "etf": false,
-  "mcap": 4368628736.0,
+  "mcap": 3749560576.0,
   "short_pct": 0.2188,
-  "inst_pct": 0.48656,
+  "inst_pct": 0.49321,
   "op_margin": -85.870735,
   "rev_growth_q": null,
   "cash": 2501829120.0,
   "debt": 4409000.0,
   "fcf_ttm": -552209152.0,
   "shares": 195289593.0,
-  "fwd_pe": -19.683933,
+  "fwd_pe": -16.89457,
   "peg": null,
   "eps_growth": null,
-  "price": 22.37,
+  "price": 19.2,
   "fcf_q": [
    -199831000.0,
    -141683000.0,
@@ -720,7 +720,7 @@
    -10142085.0
   ],
   "misses_4q": 3,
-  "ret5_vs_spy_pp": 63.9
+  "ret5_vs_spy_pp": 27.5
  },
  "SPY": {
   "ticker": "SPY",
@@ -729,21 +729,21 @@
  },
  "HOOD": {
   "ticker": "HOOD",
-  "asof": "2026-11-18",
+  "asof": "2026-11-25",
   "etf": false,
-  "mcap": 62304993280.0,
+  "mcap": 59117252608.0,
   "short_pct": 0.044899996,
-  "inst_pct": 0.81088996,
+  "inst_pct": 0.81491,
   "op_margin": 0.45651,
   "rev_growth_q": 0.118,
   "cash": 24828999680.0,
   "debt": 22552000512.0,
   "fcf_ttm": null,
   "shares": 793425151.0,
-  "fwd_pe": 20.287409,
-  "peg": 1.2623,
+  "fwd_pe": 19.217203,
+  "peg": 1.0922,
   "eps_growth": -0.164,
-  "price": 69.19,
+  "price": 65.65,
   "fcf_q": [
    1204000000.0,
    696000000.0,
@@ -784,8 +784,8 @@
    1160000000.0,
    -909000000.0
   ],
-  "misses_4q": 1,
-  "ret5_vs_spy_pp": 67.6
+  "misses_4q": 2,
+  "ret5_vs_spy_pp": 67.7
  },
  "GOOGL": {
   "ticker": "GOOGL",
@@ -914,21 +914,21 @@
  },
  "META": {
   "ticker": "META",
-  "asof": "2026-11-18",
+  "asof": "2026-11-25",
   "etf": false,
-  "mcap": 1581980975104.0,
+  "mcap": 1507722133504.0,
   "short_pct": 0.0341,
-  "inst_pct": 0.78472,
+  "inst_pct": 0.78692,
   "op_margin": 0.37777,
   "rev_growth_q": 0.261,
   "cash": 82448998400.0,
   "debt": 114842001408.0,
   "fcf_ttm": 16848499712.0,
   "shares": 2214472367.0,
-  "fwd_pe": 17.347364,
-  "peg": 0.8142,
+  "fwd_pe": 16.533073,
+  "peg": 0.729,
   "eps_growth": 2.648,
-  "price": 618.87,
+  "price": 589.82,
   "fcf_q": [
    -1157000000.0,
    1746000000.0,
@@ -970,7 +970,7 @@
    19289000000.0
   ],
   "misses_4q": 2,
-  "ret5_vs_spy_pp": 18.3
+  "ret5_vs_spy_pp": 11.3
  },
  "NVDA": {
   "ticker": "NVDA",
